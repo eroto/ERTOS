@@ -3,7 +3,20 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.235689055">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.235689055" moduleId="org.eclipse.cdt.core.settings" name="Debug">
-				<externalSettings/>
+				<externalSettings>
+					<externalSetting>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/board"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/utilities"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/CMSIS"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/Schr"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/MyTypedef"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/apptasks"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/drivers"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/InitApp"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/Sys"/>
+						<entry flags="RESOLVED" kind="includePath" name="C:/Users/Enrique/Documents/GitHub/ERTOS/startup"/>
+					</externalSetting>
+				</externalSettings>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -50,18 +63,16 @@
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.1909490127" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor.538738722" name="Use preprocessor" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths.946603473" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../ERTSch/ERTSch/InitApp"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/startup"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/board"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/utilities"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/CMSIS"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/drivers"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/Schr"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/InitApp"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/MyTypedef"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/apptasks"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTSch/ERTSch/InitApp}&quot;"/>
-									<listOptionValue builtIn="false" value="../ERTSch/Sys"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/startup"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/Sys"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/InitApp"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/drivers"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/apptasks"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/MyTypedef"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/Schr"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/CMSIS"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/utilities"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/board"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.1493821128" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="CPU_MKL25Z128VFM4"/>
@@ -74,18 +85,17 @@
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.std.335382976" name="Language standard" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.std" useByScannerDiscovery="true" value="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.std.gnu99" valueType="enumerated"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.1973376392" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../ERTSch/ERTSch/InitApp"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/startup"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/board"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/utilities"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/CMSIS"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/drivers"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/Schr"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/InitApp"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/MyTypedef"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/apptasks"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTSch/ERTSch/InitApp}&quot;"/>
-									<listOptionValue builtIn="false" value="../ERTSch/Sys"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/startup"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/Sys"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/InitApp"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/drivers"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/apptasks"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/MyTypedef"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/Schr"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/CMSIS"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/utilities"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/board"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\Enrique\Documents\GitHub\ERTOS\IO&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.692445517" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -94,18 +104,16 @@
 									<listOptionValue builtIn="false" value="&quot;CPU_MKL25Z128VFM4&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.630685010" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../ERTSch/ERTSch/InitApp"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/startup"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/board"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/utilities"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/CMSIS"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/drivers"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/Schr"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/InitApp"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/MyTypedef"/>
-									<listOptionValue builtIn="false" value="C:/Users/uid87057/workspace.kds/ERTSch/apptasks"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTSch/ERTSch/InitApp}&quot;"/>
-									<listOptionValue builtIn="false" value="../ERTSch/Sys"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/startup"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/Sys"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/InitApp"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/drivers"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/apptasks"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/MyTypedef"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/Schr"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/CMSIS"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/utilities"/>
+									<listOptionValue builtIn="false" value="C:/Users/Enrique/Documents/GitHub/ERTOS/board"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1642083333" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
