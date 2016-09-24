@@ -16,6 +16,7 @@ RM := rm -rf
 -include apptasks/subdir.mk
 -include Schr/subdir.mk
 -include InitApp/subdir.mk
+-include IO/subdir.mk
 -include subdir.mk
 -include objects.mk
 

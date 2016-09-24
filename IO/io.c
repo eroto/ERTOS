@@ -8,9 +8,9 @@
 
 void io_init(void)
 {
+    io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput);
     io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput);
-    io_Pin_Cfg(PORT_C, 6, kGPIO_DigitalOutput);
-    io_Pin_Cfg(PORT_C, 5, kGPIO_DigitalOutput);
+    io_Pin_Cfg(PORT_C, 3, kGPIO_DigitalOutput);
 }
 
 
@@ -46,8 +46,8 @@ int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
 
 	    case PORT_D:
 	        port_clk = kCLOCK_PortD;
-	        GPIO = GPIOC;
-	        PORT= PORTC;
+	        GPIO = GPIOD;
+	        PORT= PORTD;
 	        break;
 
 	    case PORT_E:
@@ -73,7 +73,7 @@ int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
         PORT_Struct.driveStrength = kPORT_LowDriveStrength;
         PORT_Struct.slewRate = kPORT_SlowSlewRate;
 
-        PORT_SetPinConfig(PORT, 7U, &PORT_Struct);
+        PORT_SetPinConfig(PORT, PIN, &PORT_Struct);
 
         GPIO_Struct.pinDirection = DIR;
         GPIO_Struct.outputLogic = DIR;
