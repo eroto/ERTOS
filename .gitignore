@@ -33,7 +33,7 @@
 *.su
 
 #Eclipse language settings
-*settings.xml
+language.settings.xml
 
 #vim editor backups
 *~
