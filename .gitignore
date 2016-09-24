@@ -39,3 +39,4 @@
 #vim editor backups
 *~
 *.swp
+*.mk
