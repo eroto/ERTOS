@@ -40,3 +40,4 @@
 *~
 *.swp
 *.mk
+.settings/language.settings.xml
