@@ -6,6 +6,26 @@
  */
 #include "io.h"
 
+/*Global Variables*/
+/*----------------------------------------------------------------------------------------------*/
+GPIO_Type* a_GPIO[PORT_MAX_NUM] = GPIO_BASE_PTRS;
+PORT_Type* a_PORT[PORT_MAX_NUM] = PORT_BASE_PTRS;
+clock_ip_name_t a_PortClk[PORT_MAX_NUM] = {kCLOCK_PortA, kCLOCK_PortB, kCLOCK_PortC, kCLOCK_PortD, kCLOCK_PortE};
+
+
+/*Function prototype*/
+/*----------------------------------------------------------------------------------------------*/
+clock_ip_name_t io_Get_PortClk(IO_PORT PORT);
+
+/*Functions*/
+/*----------------------------------------------------------------------------------------------*/
+
+/*-----------------------------------*/
+/* Function:                         */
+/* input:                            */
+/* return:                           */
+/* Note:                             */
+/*-----------------------------------*/
 void io_init(void)
 {
     io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput);
@@ -14,58 +34,48 @@ void io_init(void)
 }
 
 
+/*-----------------------------------*/
+/* Function:                         */
+/* input:                            */
+/* return:                           */
+/* Note:                             */
+/*-----------------------------------*/
+clock_ip_name_t io_Get_PortClk(IO_PORT PORT)
+{
+    clock_ip_name_t result = kCLOCK_IpInvalid;
+
+    if (PORT < PORT_MAX_NUM)
+    {
+        result = a_PortClk[PORT];
+    }
+
+    return result;
+}
+
+
+
+/*-----------------------------------*/
+/* Function:                         */
+/* input:                            */
+/* return:                           */
+/* Note:                             */
+/*-----------------------------------*/
 int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
 {
 
     int8_t result = 0;
+    clock_ip_name_t port_clk = kCLOCK_IpInvalid;
 	gpio_pin_config_t GPIO_Struct;
 	port_pin_config_t PORT_Struct;
-	clock_ip_name_t port_clk;
-	GPIO_Type* GPIO;
-	PORT_Type* PORT;
 
-	switch(IO_PORT)
+	port_clk = io_Get_PortClk(IO_PORT);
+
+	if(port_clk == kCLOCK_IpInvalid)
 	{
-	    case PORT_A:
-	        port_clk = kCLOCK_PortA;
-	        GPIO = GPIOA;
-	        PORT = PORTA;
-	        break;
-
-	    case PORT_B:
-	        port_clk = kCLOCK_PortB;
-	        GPIO= GPIOB;
-	        PORT= PORTB;
-	        break;
-
-	    case PORT_C:
-	        port_clk = kCLOCK_PortC;
-	        GPIO = GPIOC;
-	        PORT = PORTC;
-	        break;
-
-	    case PORT_D:
-	        port_clk = kCLOCK_PortD;
-	        GPIO = GPIOD;
-	        PORT= PORTD;
-	        break;
-
-	    case PORT_E:
-	        port_clk = kCLOCK_PortE;
-	        GPIO = GPIOE;
-	        PORT = PORTE;
-	        break;
-
-	    default:
-	        result = -1;
+	    result = -1;
 	}
-
-	if(result == 0)
+	else
 	{
-	    /* Unlock the port clock */
-        CLOCK_EnableClock(port_clk);
-
-
         // Define a digital input pin PCR configuration
         PORT_Struct.pullSelect = kPORT_PullUp;
         PORT_Struct.mux = kPORT_MuxAsGpio;
@@ -73,17 +83,37 @@ int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
         PORT_Struct.driveStrength = kPORT_LowDriveStrength;
         PORT_Struct.slewRate = kPORT_SlowSlewRate;
 
-        PORT_SetPinConfig(PORT, PIN, &PORT_Struct);
+        CLOCK_EnableClock(port_clk);
+        PORT_SetPinConfig(a_PORT[IO_PORT], PIN, &PORT_Struct);
 
         GPIO_Struct.pinDirection = DIR;
         GPIO_Struct.outputLogic = DIR;
-        GPIO_PinInit(GPIO,PIN,&GPIO_Struct);
-	}
-	else
-	{/*Do nothing*/}
+        GPIO_PinInit(a_GPIO[IO_PORT],PIN,&GPIO_Struct);
+    }
 
 	return result;
+}
 
+/*-----------------------------------*/
+/* Function:                         */
+/* input:                            */
+/* return:                           */
+/* Note:                             */
+/*-----------------------------------*/
+int8_t io_Read_Pin_Cfg(IO_PORT PORT, uint8_t PIN)
+{
+    uint8_t PinDir = 0;
+
+    if(PORT >= PORT_MAX_NUM)
+    {
+        PinDir = -1;
+    }
+    else
+    {
+        PinDir = (a_GPIO[PORT]->PDDR & (1 << PIN));
+    }
+
+    return PinDir;
 }
 
 

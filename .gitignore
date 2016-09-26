@@ -41,3 +41,5 @@
 *.swp
 *.mk
 .settings/language.settings.xml
+*.d
+*.map
