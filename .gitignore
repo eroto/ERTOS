@@ -31,3 +31,15 @@
 # Debug files
 *.dSYM/
 *.su
+*.d
+
+#Eclipse language settings
+.settings/language.settings.xml
+
+#vim editor backups
+*~
+*.swp
+*.mk
+.settings/language.settings.xml
+*.d
+*.map

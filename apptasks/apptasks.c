@@ -13,17 +13,17 @@ uint8_t value = 1;
 
 void apptask_5ms(void)
 {
-
-
+    GPIO_TogglePinsOutput(GPIOC, 1<<7);
 }
 
 void apptask_20ms()
 {
-	GPIO_TogglePinsOutput(GPIOC, 0x80);
+	GPIO_TogglePinsOutput(GPIOC, 1<<0);
 }
 
 void apptask_100ms(void)
 {
+    GPIO_TogglePinsOutput(GPIOC, 1<<3);
 }
 
 void apptask_1s(void)
