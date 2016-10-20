@@ -24,6 +24,7 @@ void apptask_20ms()
 void apptask_100ms(void)
 {
     GPIO_TogglePinsOutput(GPIOC, 1<<3);
+    uart_Send();
 }
 
 void apptask_1s(void)
