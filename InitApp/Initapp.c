@@ -11,6 +11,7 @@
 #include "Schr.h"
 #include "io.h"
 #include "fsl_cop.h"
+#include "uart.h"
 
 
 
@@ -41,6 +42,7 @@ void InitApp1(void)
 	COP_Disable(SIM);
 	io_init();
 	Schr_Init();
+	uart_init();
 }
 
 
