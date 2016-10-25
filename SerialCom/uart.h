@@ -14,9 +14,11 @@
 #include "mytypedef.h"
 
 
+uint8_t sendData[15];
+
 void uart_init(void);
-void UART_UserCallback(uart_handle_t *handle, status_t status, void *userData);
-void uart_Send(void);
+void uart_Callback(uart_handle_t *handle, status_t status, void *userData);
+status_t uart_Send(uint8_t *lpub_data, const uint8_t lub_size);
 
 
 #endif /* SERIALCOM_UART_H_ */

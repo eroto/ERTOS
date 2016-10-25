@@ -8,6 +8,8 @@
 
 #include "apptasks.h"
 #include "fsl_gpio.h"
+#include "uart.h"
+
 
 uint8_t value = 1;
 
@@ -24,7 +26,7 @@ void apptask_20ms()
 void apptask_100ms(void)
 {
     GPIO_TogglePinsOutput(GPIOC, 1<<3);
-    uart_Send();
+    uart_Send(sendData, 15);
 }
 
 void apptask_1s(void)
