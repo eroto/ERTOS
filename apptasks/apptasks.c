@@ -9,7 +9,10 @@
 #include "apptasks.h"
 #include "fsl_gpio.h"
 #include "uart.h"
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5d512abb0be231e5295651147f7a751fd1653bd8
 
 uint8_t value = 1;
 
