@@ -14,6 +14,7 @@ RM := rm -rf
 -include drivers/subdir.mk
 -include board/subdir.mk
 -include apptasks/subdir.mk
+-include SerialCom/subdir.mk
 -include Schr/subdir.mk
 -include InitApp/subdir.mk
 -include IO/subdir.mk
