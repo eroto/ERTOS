@@ -28,7 +28,6 @@ uart_transfer_t sendXfer;
 *-----------------------------------*/
 void uart_init(void)
 {
-    uint8_t ch;
     UART_GetDefaultConfig(&user_config);
     user_config.baudRate_Bps = 115200U;
     user_config.enableTx = true;
