@@ -8,6 +8,7 @@
 
 #include "apptasks.h"
 #include "fsl_gpio.h"
+#include "uart.h"
 
 uint8_t value = 1;
 
