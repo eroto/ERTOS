@@ -12,6 +12,7 @@
 #include "io.h"
 #include "fsl_cop.h"
 #include "uart.h"
+#include "rtc.h"
 
 
 
@@ -43,6 +44,8 @@ void InitApp1(void)
 	io_init();
 	Schr_Init();
 	uart_init();
+	rtc_init();
+
 }
 
 
