@@ -30,7 +30,7 @@ void io_init(void)
 {
     io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput);
     io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput);
-    io_Pin_Cfg(PORT_C, 3, kGPIO_DigitalOutput);
+    //io_Pin_Cfg(PORT_C, 3, kGPIO_DigitalOutput);
 }
 
 
