@@ -16,6 +16,7 @@ RM := rm -rf
 -include apptasks/subdir.mk
 -include SerialCom/subdir.mk
 -include Schr/subdir.mk
+-include RTC/subdir.mk
 -include InitApp/subdir.mk
 -include IO/subdir.mk
 -include subdir.mk
@@ -52,38 +53,38 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
-ERTSch.hex \
+ERTOS.hex \
 
 SECONDARY_SIZE += \
-ERTSch.siz \
+ERTOS.siz \
 
 
 # All Target
-all: ERTSch.elf secondary-outputs
+all: ERTOS.elf secondary-outputs
 
 # Tool invocations
-ERTSch.elf: $(OBJS) $(USER_OBJS)
+ERTOS.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wall  -g3 -T "../MKL25Z128xxx4_flash.ld" -Xlinker --gc-sections -Wl,-Map,"ERTSch.map" --specs=nano.specs -specs=nosys.specs -Xlinker -z -Xlinker muldefs -o "ERTSch.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wall  -g3 -T "../MKL25Z128xxx4_flash.ld" -Xlinker --gc-sections -Wl,-Map,"ERTOS.map" --specs=nano.specs -specs=nosys.specs -Xlinker -z -Xlinker muldefs -o "ERTOS.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-ERTSch.hex: ERTSch.elf
+ERTOS.hex: ERTOS.elf
 	@echo 'Invoking: Cross ARM GNU Create Flash Image'
-	arm-none-eabi-objcopy -O ihex "ERTSch.elf"  "ERTSch.hex"
+	arm-none-eabi-objcopy -O ihex "ERTOS.elf"  "ERTOS.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-ERTSch.siz: ERTSch.elf
+ERTOS.siz: ERTOS.elf
 	@echo 'Invoking: Cross ARM GNU Print Size'
-	arm-none-eabi-size --format=berkeley "ERTSch.elf"
+	arm-none-eabi-size --format=berkeley "ERTOS.elf"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(SECONDARY_SIZE)$(C++_DEPS)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(CC_DEPS)$(SECONDARY_FLASH)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS)$(S_UPPER_DEPS) ERTSch.elf
+	-$(RM) $(SECONDARY_SIZE)$(C++_DEPS)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(CC_DEPS)$(SECONDARY_FLASH)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS)$(S_UPPER_DEPS) ERTOS.elf
 	-@echo ' '
 
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_SIZE)
