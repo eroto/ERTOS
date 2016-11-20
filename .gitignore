@@ -31,7 +31,7 @@
 # Debug files
 *.dSYM/
 *.su
-/Debug/apptasks/*.*
+Debug/apptasks/*.*
 
 #Eclipse language settings
 .settings/language.settings.xml
@@ -42,3 +42,4 @@
 .settings/language.settings.xml
 *.map
 *.xml
+
