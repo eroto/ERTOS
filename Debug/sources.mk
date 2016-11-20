@@ -33,6 +33,9 @@ source \
 drivers \
 board \
 apptasks \
+SerialCom \
 Schr \
+RTC \
 InitApp \
+IO \
 

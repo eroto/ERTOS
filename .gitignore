@@ -31,7 +31,7 @@
 # Debug files
 *.dSYM/
 *.su
-*.d
+C:\Users\Enrique\Documents\GitHub\ERTOS\Debug\apptasks\*.*
 
 #Eclipse language settings
 .settings/language.settings.xml
@@ -39,16 +39,8 @@
 #vim editor backups
 *~
 *.swp
-*.mk
 .settings/language.settings.xml
-*.d
 *.map
-*.d
-*.d
 *.xml
-Debug/utilities/subdir.mk
-Debug/utilities/fsl_shell.d
-Debug/utilities/fsl_notifier.d
-Debug/apptasks/subdir.mk
-Debug/board/board.d
-Debug/board/clock_config.d
+
+*.d

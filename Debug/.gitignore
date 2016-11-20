@@ -1,0 +1,14 @@
+/IO/
+/RTC/
+/SerialCom/
+
+Debug/apptasks/*.*
+
+/InitApp/
+/Schr/
+/apptasks/
+/board/
+/drivers/
+/source/
+/startup/
+/utilities/
