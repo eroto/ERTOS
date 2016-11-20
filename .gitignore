@@ -52,3 +52,5 @@ Debug/utilities/fsl_notifier.d
 Debug/apptasks/subdir.mk
 Debug/board/board.d
 Debug/board/clock_config.d
+*.mk
+*.d
