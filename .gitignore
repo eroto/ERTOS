@@ -71,6 +71,3 @@ Debug/*.mk
 Debug/*.d
 *.mk
 *.d
-
-
-Debug/apptasks/subdir.mk
