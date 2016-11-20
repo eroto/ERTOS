@@ -2,5 +2,5 @@
 /RTC/
 /SerialCom/
 
-/apptasks/*.*
+Debug/apptasks/*.*
 
