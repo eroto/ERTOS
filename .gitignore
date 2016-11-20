@@ -31,7 +31,7 @@
 # Debug files
 *.dSYM/
 *.su
-Debug/apptasks/*.*
+C:\Users\Enrique\Documents\GitHub\ERTOS\Debug\apptasks\*.*
 
 #Eclipse language settings
 .settings/language.settings.xml
@@ -43,3 +43,4 @@ Debug/apptasks/*.*
 *.map
 *.xml
 
+*.d
