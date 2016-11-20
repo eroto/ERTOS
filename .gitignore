@@ -46,6 +46,8 @@
 *.d
 *.d
 *.xml
+Debug/*.mk
+Debug/*.d
 Debug/utilities/subdir.mk
 Debug/utilities/fsl_shell.d
 Debug/utilities/fsl_notifier.d
