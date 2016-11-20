@@ -96,6 +96,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/Schr}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/MyTypedef}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/apptasks}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/RTC}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.692445517" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
