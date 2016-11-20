@@ -32,30 +32,7 @@
 *.dSYM/
 *.su
 *.d
-Debug/apptasks/*.mk
-Debug/board/*.mk
-Debug/drivers/*.mk
-Debug/InitApp/*.mk
-Debug/IO/*.mk
-Debug/RTC/*.mk
-Debug/Schr/*.mk
-Debug/SerialCom/*.mk
-Debug/source/*.mk
-Debug/startup/*.mk
-Debug/Sys/*.mk
-Debug/utilities/*.mk
-Debug/apptasks/*.d
-Debug/board/*.d
-Debug/drivers/*.d
-Debug/InitApp/*.d
-Debug/IO/*.d
-Debug/RTC/*.d
-Debug/Schr/*.d
-Debug/SerialCom/*.d
-Debug/source/*.d
-Debug/startup/*.d
-Debug/Sys/*.d
-Debug/utilities/*.d
+*.mk
 
 #Eclipse language settings
 .settings/language.settings.xml
@@ -63,11 +40,8 @@ Debug/utilities/*.d
 #vim editor backups
 *~
 *.swp
-*.mk
 .settings/language.settings.xml
 *.map
 *.xml
 Debug/*.mk
 Debug/*.d
-*.mk
-*.d
