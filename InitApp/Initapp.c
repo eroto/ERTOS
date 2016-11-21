@@ -42,7 +42,6 @@ void InitApp1(void)
 
 	COP_Disable(SIM);
 	io_init();
-	Schr_Init();
 	uart_init();
 	rtc_init();
 
@@ -52,6 +51,6 @@ void InitApp1(void)
 void InitApp2(void)
 {
 
-
+	Schr_Init();
 
 }
