@@ -40,6 +40,8 @@ void apptask_100ms(void)
 
 void apptask_1s(void)
 {
+	GPIO_TogglePinsOutput(GPIOC, 1<<7);
+
 }
 
 void apptask_idle(void)
