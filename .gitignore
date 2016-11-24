@@ -44,3 +44,5 @@ C:\Users\Enrique\Documents\GitHub\ERTOS\Debug\apptasks\*.*
 *.xml
 
 *.d
+Debug/makefile
+Debug/sources.mk
