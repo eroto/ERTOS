@@ -15,7 +15,7 @@ uint8_t value = 1;
 
 void apptask_5ms(void)
 {
-    GPIO_TogglePinsOutput(GPIOC, 1<<7);
+    //GPIO_TogglePinsOutput(GPIOC, 1<<7);
 }
 
 void apptask_20ms()
@@ -40,6 +40,8 @@ void apptask_100ms(void)
 
 void apptask_1s(void)
 {
+	GPIO_TogglePinsOutput(GPIOC, 1<<7);
+
 }
 
 void apptask_idle(void)
