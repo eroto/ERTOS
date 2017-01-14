@@ -28,9 +28,33 @@ clock_ip_name_t io_Get_PortClk(IO_PORT PORT);
 /*-----------------------------------*/
 void io_init(void)
 {
-    io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput);
-    io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput);
-    //io_Pin_Cfg(PORT_C, 3, kGPIO_DigitalOutput);
+
+
+    /*Reset*/
+    io_Pin_Cfg(PORT_B, 8, kGPIO_DigitalInput, kPORT_PullDown);
+
+    /*Pin Cfg Blue LED*/
+    io_Pin_Cfg(PORT_D, 1, kGPIO_DigitalOutput, kPORT_PullUp);
+
+    /*Pin Cfg for LCD 1602*/
+	io_Pin_Cfg(PORT_B, 0, kGPIO_DigitalOutput, kPORT_PullUp);
+	io_Pin_Cfg(PORT_B, 1, kGPIO_DigitalOutput, kPORT_PullUp);
+	io_Pin_Cfg(PORT_B, 2, kGPIO_DigitalOutput, kPORT_PullUp);
+	io_Pin_Cfg(PORT_B, 3, kGPIO_DigitalOutput, kPORT_PullUp);
+
+	io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput, kPORT_PullUp);
+	io_Pin_Cfg(PORT_C, 4, kGPIO_DigitalOutput, kPORT_PullUp);
+    io_Pin_Cfg(PORT_C, 5, kGPIO_DigitalOutput, kPORT_PullUp);
+    io_Pin_Cfg(PORT_C, 6, kGPIO_DigitalOutput, kPORT_PullUp);
+    io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput, kPORT_PullUp);
+
+    /*LCD RS*/
+    io_Pin_Cfg(PORT_A, 1, kGPIO_DigitalOutput, kPORT_PullDown);
+
+    GPIO_ClearPinsOutput(GPIOB, 0x0Fu);
+    GPIO_ClearPinsOutput(GPIOC, 0xF1u);
+    GPIO_WritePinOutput(GPIOA, 1, 0);
+    //GPIO_WritePinOutput(GPIOC, 0, 0);
 }
 
 
@@ -52,7 +76,16 @@ clock_ip_name_t io_Get_PortClk(IO_PORT PORT)
     return result;
 }
 
+/*-----------------------------------*/
+/* Function:                         */
+/* input:                            */
+/* return:                           */
+/* Note:                             */
+/*-----------------------------------*/
+void io_Pin_Init(void)
+{
 
+}
 
 /*-----------------------------------*/
 /* Function:                         */
@@ -60,7 +93,7 @@ clock_ip_name_t io_Get_PortClk(IO_PORT PORT)
 /* return:                           */
 /* Note:                             */
 /*-----------------------------------*/
-int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
+int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR, uint16_t PullSelect)
 {
 
     int8_t result = 0;
@@ -77,13 +110,16 @@ int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
 	else
 	{
         // Define a digital input pin PCR configuration
-        PORT_Struct.pullSelect = kPORT_PullUp;
+        PORT_Struct.pullSelect = PullSelect;
         PORT_Struct.mux = kPORT_MuxAsGpio;
         PORT_Struct.passiveFilterEnable = kPORT_PassiveFilterDisable;
         PORT_Struct.driveStrength = kPORT_LowDriveStrength;
         PORT_Struct.slewRate = kPORT_SlowSlewRate;
 
         CLOCK_EnableClock(port_clk);
+
+        PORT_SetPinMux(a_PORT[IO_PORT], PIN, kPORT_MuxAsGpio);
+
         PORT_SetPinConfig(a_PORT[IO_PORT], PIN, &PORT_Struct);
 
         GPIO_Struct.pinDirection = DIR;
@@ -115,6 +151,13 @@ int8_t io_Read_Pin_Cfg(IO_PORT PORT, uint8_t PIN)
 
     return PinDir;
 }
+
+/*-----------------------------------*/
+/* Function:                         */
+/* input:                            */
+/* return:                           */
+/* Note:                             */
+/*-----------------------------------*/
 
 
 

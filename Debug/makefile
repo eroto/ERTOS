@@ -17,6 +17,7 @@ RM := rm -rf
 -include SerialCom/subdir.mk
 -include Schr/subdir.mk
 -include RTC/subdir.mk
+-include LCD1602A/subdir.mk
 -include InitApp/subdir.mk
 -include IO/subdir.mk
 -include subdir.mk

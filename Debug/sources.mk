@@ -36,6 +36,7 @@ apptasks \
 SerialCom \
 Schr \
 RTC \
+LCD1602A \
 InitApp \
 IO \
 
