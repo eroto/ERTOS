@@ -10,6 +10,7 @@
 #include "fsl_common.h"
 #include "fsl_clock.h"
 #include "fsl_gpio.h"
+#include "uart.h"
 #include "rtc.h"
 
 uint32_t sec;
@@ -45,9 +46,9 @@ void rtc_init(void)
 	RTC_Init(RTC, &rtcConfig);
 	//RTC_StopTimer(RTC);
 
-	date.year = 2016;
-	date.month = 11;
-	date.day = 20;
+	date.year = 2017;
+	date.month = 1;
+	date.day = 2;
 	date.hour = 13;
 	date.minute = 50;
 	date.second = 00;
@@ -62,7 +63,7 @@ void rtc_init(void)
 	rtc_SetDatetime(&date);
 
 	rtc_SetAlarm(&RTC_Alarm);
-	GPIO_WritePinOutput(GPIOC,7,0);
+	//GPIO_WritePinOutput(GPIOC,7,0);
 	rtc_Start();
 	EnableIRQ(RTC_IRQn);
 	//EnableIRQ(RTC_Seconds_IRQn);
@@ -84,6 +85,11 @@ void rtc_SetDatetime(rtc_datetime_t *Datetime )
 {
 	rtc_Stop();
 	RTC_SetDatetime(RTC, Datetime);
+
+}
+
+void rtc_GetTime()
+{
 
 }
 
@@ -123,7 +129,7 @@ void rtc_GetAlarm(rtc_datetime_t * Datetime )
 
 void RTC_IRQHandler(void)
 {
-	GPIO_WritePinOutput(GPIOC,7,1);
+	//GPIO_WritePinOutput(GPIOC,7,1);
 	alarm_ringing = 1;
 	rtc_Stop();
 	RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
@@ -132,11 +138,22 @@ void RTC_IRQHandler(void)
 
 void RTC_Seconds_IRQHandler(void)
 {
-	GPIO_WritePinOutput(GPIOC,7,1);
+	//GPIO_WritePinOutput(GPIOC,7,1);
 	alarm_ringing = 1;
 	rtc_Stop();
 	RTC_ClearStatusFlags(RTC, kRTC_SecondsInterruptEnable);
 	rtc_Start();
+}
+
+void RTC_SendClock(void)
+{
+    rtc_GetDatetime(&Temp_date);
+
+    PublicSendData[0] = Temp_date.hour;
+    PublicSendData[1] = Temp_date.minute;
+    PublicSendData[2] = Temp_date.second;
+
+    uart_ReqTx(PublicSendData, 3);
 }
 
 

@@ -18,7 +18,7 @@
 /******************************************************************************
 *   Global Variable Definitions
 ******************************************************************************/
-T_OpModeType  ruw_curOpMode;
+T_OpModeType  ruw_curOpMode = 0x00;
 
 extern volatile SCHM_BOOLEAN re_mngExecflag;
 
@@ -52,7 +52,7 @@ void Schr_Init( void )
     /* clear timer interrupt flag */
     re_mngExecflag = SCHM_FALSE;
 
-    /*Timers stopped un Debug mode*/
+    /*Timers stopped ui Debug mode*/
     pit_config_t Sch_Pit_cfg;
 
     Sch_Pit_cfg.enableRunInDebug = FALSE;
