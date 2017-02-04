@@ -27,7 +27,6 @@ void apptask_5ms(void)
 {
     //GPIO_TogglePinsOutput(GPIOC, 1<<7);
 	uart_main();
-
 }
 
 
@@ -36,7 +35,7 @@ void apptask_5ms(void)
 void apptask_20ms()
 {
 
-	Disp_Main();
+
 }
 
 void apptask_100ms(void)
@@ -49,11 +48,14 @@ void apptask_100ms(void)
 	PublicSendData[1] = io_Read_Pin(GPIOB,8);
 
 	uart_ReqTx(PublicSendData, 2);
+
+	Disp_Main();
 }
 
 void apptask_1s(void)
 {
 	//GPIO_TogglePinsOutput(GPIOC, 1<<7);
+	GPIO_WritePinOutput(GPIOD, 1, FALSE);
 
 }
 

@@ -33,6 +33,7 @@ source \
 drivers \
 board \
 apptasks \
+Timers \
 SerialCom \
 Schr \
 RTC \

@@ -52,19 +52,6 @@ void Schr_Init( void )
     /* clear timer interrupt flag */
     re_mngExecflag = SCHM_FALSE;
 
-    /*Timers stopped ui Debug mode*/
-    pit_config_t Sch_Pit_cfg;
-
-    Sch_Pit_cfg.enableRunInDebug = FALSE;
-
-    PIT_Init(PIT, (pit_config_t *) &Sch_Pit_cfg);
-
-    PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, MSEC_TO_COUNT(5,PIT_CLK_SRC_HZ));
-
-    PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
-
-    EnableIRQ(PIT_IRQn);
-
     PIT_StartTimer(PIT, kPIT_Chnl_0);
 
     ruw_curOpMode = 0x01;

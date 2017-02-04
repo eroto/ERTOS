@@ -7,12 +7,14 @@
 
 #include <stdint.h>
 #include "mytypedef.h"
+#include "timers.h"
 #include "Initapp.h"
 #include "Schr.h"
 #include "io.h"
 #include "fsl_cop.h"
 #include "uart.h"
 #include "rtc.h"
+#include "LCD1602A.h"
 
 
 
@@ -41,6 +43,7 @@ void InitApp1(void)
 {
 
 	COP_Disable(SIM);
+	timers_init();
 	io_init();
 	uart_init();
 	rtc_init();
@@ -50,8 +53,7 @@ void InitApp1(void)
 
 void InitApp2(void)
 {
-
+	Disp_Init();
 	Schr_Init();
-
 
 }

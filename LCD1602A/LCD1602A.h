@@ -8,18 +8,18 @@
 #ifndef LCD1602A_H_
 #define LCD1602A_H_
 
+#include <stdint.h>
 
 #define CLK_SRC_HZ	((uint64_t)24000000)
 
+#define DISP_FUNC_SET				(uint8_t)0x38u
+#define DISP_CLEAR					(uint8_t)0x01u
+#define DISP_OM						(uint8_t)0x0Fu
+#define DISP_ENTRY_MODE_SET			(uint8_t)0x06u
+#define DISP_RETURN_HOME			(uint8_t)0x02u
 
 
-
-void Disp_ON(void);
-void Disp_send_enable(void);
-void Disp_Clear(void);
-void Disp_Main(void);
-void Disp_FunctionSet(void);
-
+#define	DISP_INIT_DELAY				(uint8_t)50u
 
 typedef enum
 {
@@ -33,7 +33,7 @@ typedef enum
 	ASCII_singlequote 		=  0x27u,//		'
 	ASCII_OpenParenthesis 	=  0x28u,//		(
 	ASCII_CloseParenthesis 	=  0x29u,//		)
-	ASCII_asterick 			= 0x2Au,//		*
+	ASCII_asterick 			=  0x2Au,//		*
 	ASCII_plus 				=  0x2Bu,//		+
 	ASCII_comma 			=  0x2Cu,//		,
 	ASCII_minus 			=  0x2Du,//		-
@@ -115,5 +115,16 @@ typedef enum
 	ASCII_leftarrow			=  0x7Fu //     <--
 
 }ASCII_Char;
+
+
+void Disp_ON(void);
+void Disp_send_enable(void);
+void Disp_Clear(void);
+void Disp_Main(void);
+void Disp_FunctionSet(void);
+void Disp_SendCmd(uint8_t disp_command);
+void Disp_wait_us(uint64_t usec_time);
+void Disp_Init(void);
+void Disp_write_ASCII(ASCII_Char character);
 
 #endif /* LCD1602A_H_ */

@@ -93,7 +93,7 @@ void rtc_GetTime()
 
 }
 
-void rtc_GetDatetime(rtc_datetime_t *Datetime )
+void rtc_GetDatetime(rtc_datetime_t *Datetime)
 {
 	if(Datetime != NULL)
 	{
