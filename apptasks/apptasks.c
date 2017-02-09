@@ -43,19 +43,25 @@ void apptask_100ms(void)
 	//GPIO_TogglePinsOutput(GPIOC, 1<<3);
 	RTC_SendClock();
 
-	PublicSendData[0] = '-';
+	//PublicSendData[0] = '-';
 
-	PublicSendData[1] = io_Read_Pin(GPIOB,8);
+	//PublicSendData[1] = io_Read_Pin(GPIOB,8);
 
-	uart_ReqTx(PublicSendData, 2);
+	//uart_ReqTx(PublicSendData, 2);
 
 	Disp_Main();
 }
 
 void apptask_1s(void)
 {
+	static uint8_t pin_val = 1;
+
 	//GPIO_TogglePinsOutput(GPIOC, 1<<7);
+
+	//GPIO_TogglePinsOutput(GPIOD, 0);
 	GPIO_WritePinOutput(GPIOD, 1, FALSE);
+
+	Disp_Init();
 
 }
 

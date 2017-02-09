@@ -12,10 +12,22 @@
 
 #define CLK_SRC_HZ	((uint64_t)24000000)
 
-#define DISP_FUNC_SET				(uint8_t)0x38u
+#define DISP_DL	0x10 /* 1: 8bits 0: 4bits Data transfer*/
+#define DISP_N	0x08 /* 1: 2 Lines 0: 1 Line LCD Lines*/
+#define DISP_F	0x04 /* 1 : 5x10 0: 5x8 LCD Font*/
+
+#define DISP_ON_D	0x04 /*1: Disp On 0:Disp Off*/
+#define DISP_ON_C	0x02 /*1: Cursor ON  0: Cursor OFF*/
+#define DISP_ON_B	0x01 /*1: Blink ON 0:BLink OFF */
+
+#define CURSOR_SHIFT	0x01 /*TRUE*/
+#define CURSOR_INC		0x02 /*Cursor increment*/
+#define CURSOR_DEC		0x00 /*Cursor Decrement*/
+
+#define DISP_FUNC_SET				(uint8_t)0x20
 #define DISP_CLEAR					(uint8_t)0x01u
-#define DISP_OM						(uint8_t)0x0Fu
-#define DISP_ENTRY_MODE_SET			(uint8_t)0x06u
+#define DISP_OM						(uint8_t)0x08u
+#define DISP_ENTRY_MODE_SET			(uint8_t)0x04u
 #define DISP_RETURN_HOME			(uint8_t)0x02u
 
 

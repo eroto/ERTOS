@@ -6,11 +6,13 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include "MKL25Z4.h"
 #include "io.h"
 #include "mytypedef.h"
 #include "fsl_pit.h"
 #include "rtc.h"
+#include "uart.h"
 #include "LCD1602A.h"
 
 void Disp_ON(void);
@@ -20,9 +22,7 @@ void Disp_Main(void);
 void Disp_FunctionSet(void);
 
 
-
-
-
+uint8_t LCD1602_buffer[32];
 volatile uint8_t x = 0;
 
 
@@ -106,12 +106,15 @@ void Disp_Init(void)
 {
 	//Disp_FunctionSet();
 
-	Disp_SendCmd(DISP_FUNC_SET);
+
+	memset(LCD1602_buffer, 0xFF, 32);
+
+	Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
 	Disp_send_enable();
 	Disp_wait_us(DISP_INIT_DELAY);
 
 	//Disp_ON();
-	Disp_SendCmd(DISP_OM);
+	Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
 	Disp_send_enable();
 	Disp_wait_us(DISP_INIT_DELAY);
 
@@ -120,7 +123,7 @@ void Disp_Init(void)
 	Disp_send_enable();
 	Disp_wait_us(DISP_INIT_DELAY);
 
-	Disp_SendCmd(DISP_ENTRY_MODE_SET);
+	Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
 	Disp_send_enable();
 	Disp_wait_us(DISP_INIT_DELAY);
 
@@ -210,6 +213,7 @@ void Disp_wait_us(uint64_t usec_time)
 
 }
 
+
 /*-------------------------------------
 * Function:
 * Desc:
@@ -220,6 +224,15 @@ void Disp_wait_us(uint64_t usec_time)
 void Disp_Main(void)
 {
 
+	uint8_t i = 0;
+	volatile static uint16_t a = 0;
+	uint8_t  hrd1;
+	uint8_t  hrd2;
+	uint8_t  mind1;
+	uint8_t  mind2;
+	uint8_t  secd1;
+	uint8_t  secd2;
+
 	//rtc_datetime_t *Date_time
 
 	//rtc_GetDatetime(&Date_time);
@@ -229,32 +242,47 @@ void Disp_Main(void)
 	//uint8_t disp_sec = Date_time->second;
 
 
-	Disp_write_ASCII(ASCII_P);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_a);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_u);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_l);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_a);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_pound);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_E);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_n);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_r);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_i);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_q);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_u);
-	Disp_wait_us(20);
-	Disp_write_ASCII(ASCII_e);
-	Disp_wait_us(20);
+	//LCD1602_buffer[8] = ASCII_0;
+
+	hrd1 = (PublicSendData[0] / 10) + 0x30;
+	hrd2 = (PublicSendData[0] % 10) + 0x30;
+
+	mind1 = (PublicSendData[1] /10) + 0x30;
+	mind2 = (PublicSendData[1] % 10)  + 0x30;
+
+	secd1 = (PublicSendData[2] /10) + 0x30;
+	secd2 = (PublicSendData[2] % 10)  + 0x30;
+
+	LCD1602_buffer[0] = hrd1;
+	LCD1602_buffer[1] = hrd2;
+	LCD1602_buffer[2] = ASCII_colom;
+	LCD1602_buffer[3] = mind1;
+	LCD1602_buffer[4] = mind2;
+	LCD1602_buffer[5] = ASCII_colom;
+	LCD1602_buffer[6] = secd1;
+	LCD1602_buffer[7] = secd2;
+	LCD1602_buffer[8] = ASCII_period;
+
+
+	if(a >= 10)
+	{
+		LCD1602_buffer[9] = ASCII_0;
+		a = 0;
+	}
+	else
+	{
+		LCD1602_buffer[9] = a + 0x30;
+	}
+
+	a = ++a;
+
+	while(LCD1602_buffer[i] != 0xFF)
+	{
+		Disp_write_ASCII(LCD1602_buffer[i]);
+		Disp_wait_us(20);
+		i = 1 + i;
+	}
+
 	Disp_SendCmd(DISP_RETURN_HOME);
 	Disp_send_enable();
 
