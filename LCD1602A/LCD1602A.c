@@ -28,11 +28,12 @@ volatile uint8_t x = 0;
 
 
 /*-------------------------------------
- * Function:
+ * Function: func_name
  * Desc:
  * input:
  * return:
  * Note:
+ * SRS:
  *-----------------------------------*/
 void Disp_FunctionSet(void)
 {
@@ -47,12 +48,13 @@ void Disp_FunctionSet(void)
 
 
 /*-------------------------------------
-* Function:
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Disp_Clear(void)
 {
 	GPIO_SetPinsOutput(GPIOB, 0x01);
@@ -64,12 +66,13 @@ void Disp_Clear(void)
 
 
 /*-------------------------------------
-* Function:
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Disp_SendCmd(uint8_t disp_command)
 {
 
@@ -86,22 +89,13 @@ void Disp_SendCmd(uint8_t disp_command)
 }
 
 /*-------------------------------------
-* Function:
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
-
-
-
-/*-------------------------------------
-* Function:
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Disp_Init(void)
 {
 	//Disp_FunctionSet();
@@ -132,13 +126,15 @@ void Disp_Init(void)
 }
 
 
+
 /*-------------------------------------
-* Function:
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Disp_ON(void)
 {
 	GPIO_SetPinsOutput(GPIOB, 0x0F);
@@ -147,12 +143,13 @@ void Disp_ON(void)
 
 
 /*-------------------------------------
-* Function: Disp_write_ASCII
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Disp_write_ASCII(ASCII_Char ASCII_character)
 {
 
@@ -170,13 +167,15 @@ void Disp_write_ASCII(ASCII_Char ASCII_character)
 	GPIO_WritePinOutput(GPIOA, 1, 0);
 }
 
+
 /*-------------------------------------
-* Function:
-* Desc: Minimum time is 20 us
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note: Minimum time is 20 us
+ * SRS:
+ *-----------------------------------*/
 void Disp_wait_us(uint64_t usec_time)
 {
 	uint64_t counts = 0;
@@ -215,12 +214,13 @@ void Disp_wait_us(uint64_t usec_time)
 
 
 /*-------------------------------------
-* Function:
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Disp_Main(void)
 {
 
@@ -261,7 +261,7 @@ void Disp_Main(void)
 	LCD1602_buffer[5] = ASCII_colom;
 	LCD1602_buffer[6] = secd1;
 	LCD1602_buffer[7] = secd2;
-	LCD1602_buffer[8] = ASCII_period;
+	LCD1602_buffer[8] = ASCII_rightarrow;
 
 
 	if(a >= 10)
@@ -387,7 +387,14 @@ void Disp_Main(void)
 }
 
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Disp_send_enable(void)
 {
 

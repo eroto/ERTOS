@@ -36,16 +36,16 @@ const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
 	/* NOTE: this list shall be updated according to E_MODULES_ID_TYPE! */
 };
 
-/***************************************************************************
- * Function:    schInit
- *
- * Description: Main function of Scheduler module
- *
- * Returns:
- *
- * Notes:
- *
- **************************************************************************/ 
+
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Schr_Init( void )
 {
 
@@ -58,16 +58,15 @@ void Schr_Init( void )
 
 }
 
-/***************************************************************************
- * Function:    schExec
- *
- * Description: Main function of Scheduler module
- *
- * Returns:
- *
- * Notes:
- *
- **************************************************************************/ 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Schr_Exec( void )
 {
     E_MODULES_ID_TYPE le_mngIndex;
@@ -119,7 +118,14 @@ void Schr_Exec( void )
 }
 
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void PIT_IRQHandler(void)
 {
     /* Set flag so background will run */
@@ -128,3 +134,4 @@ void PIT_IRQHandler(void)
     PIT_ClearStatusFlags(PIT, 0, kPIT_TimerFlag);
 
 }
+

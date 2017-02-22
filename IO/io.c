@@ -21,11 +21,14 @@ clock_ip_name_t io_Get_PortClk(IO_PORT PORT);
 /*----------------------------------------------------------------------------------------------*/
 
 /*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void io_init(void)
 {
 
@@ -58,12 +61,14 @@ void io_init(void)
 }
 
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 clock_ip_name_t io_Get_PortClk(IO_PORT PORT)
 {
     clock_ip_name_t result = kCLOCK_IpInvalid;
@@ -76,23 +81,27 @@ clock_ip_name_t io_Get_PortClk(IO_PORT PORT)
     return result;
 }
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void io_Pin_Init(void)
 {
 
 }
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR, uint16_t PullSelect)
 {
 
@@ -130,12 +139,14 @@ int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR, uint16
 	return result;
 }
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 int8_t io_Read_Pin_Cfg(IO_PORT PORT, uint8_t PIN)
 {
     uint8_t PinDir = 0;
@@ -152,12 +163,7 @@ int8_t io_Read_Pin_Cfg(IO_PORT PORT, uint8_t PIN)
     return PinDir;
 }
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+
 
 
 

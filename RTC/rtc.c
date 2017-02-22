@@ -23,6 +23,15 @@ rtc_datetime_t RTC_Alarm;
 
 volatile uint8_t alarm_ringing = 0;
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_init(void)
 {
 
@@ -71,16 +80,40 @@ void rtc_init(void)
 	//RTC_EnableInterrupts(RTC, kRTC_SecondsInterruptEnable);
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_Start(void)
 {
 	RTC_StartTimer(RTC);
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_Stop(void)
 {
 	RTC_StopTimer(RTC);
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_SetDatetime(rtc_datetime_t *Datetime )
 {
 	rtc_Stop();
@@ -88,11 +121,27 @@ void rtc_SetDatetime(rtc_datetime_t *Datetime )
 
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_GetTime()
 {
 
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_GetDatetime(rtc_datetime_t *Datetime)
 {
 	if(Datetime != NULL)
@@ -101,6 +150,15 @@ void rtc_GetDatetime(rtc_datetime_t *Datetime)
 	}
 }
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 uint8_t rtc_SetAlarm(rtc_datetime_t * Datetime )
 {
 	uint8_t loc_status = 0;
@@ -117,7 +175,14 @@ uint8_t rtc_SetAlarm(rtc_datetime_t * Datetime )
 	return loc_status;
 }
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_GetAlarm(rtc_datetime_t * Datetime )
 {
 	if (Datetime != NULL)
@@ -126,7 +191,14 @@ void rtc_GetAlarm(rtc_datetime_t * Datetime )
 	}
 }
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void RTC_IRQHandler(void)
 {
 	//GPIO_WritePinOutput(GPIOC,7,1);
@@ -136,6 +208,15 @@ void RTC_IRQHandler(void)
 	rtc_Start();
 }
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void RTC_Seconds_IRQHandler(void)
 {
 	//GPIO_WritePinOutput(GPIOC,7,1);
@@ -145,6 +226,14 @@ void RTC_Seconds_IRQHandler(void)
 	rtc_Start();
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void RTC_SendClock(void)
 {
     rtc_GetDatetime(&Temp_date);

@@ -22,7 +22,14 @@ uint32_t deb = 0;
 
 
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void apptask_5ms(void)
 {
     //GPIO_TogglePinsOutput(GPIOC, 1<<7);
@@ -31,13 +38,28 @@ void apptask_5ms(void)
 
 
 
-
+/*-------------------------------------
+ * Function: apptask_20ms
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void apptask_20ms()
 {
 
 
 }
 
+/*-------------------------------------
+ * Function: apptask_100ms
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void apptask_100ms(void)
 {
 	//GPIO_TogglePinsOutput(GPIOC, 1<<3);
@@ -52,19 +74,36 @@ void apptask_100ms(void)
 	Disp_Main();
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void apptask_1s(void)
 {
 	static uint8_t pin_val = 1;
 
 	//GPIO_TogglePinsOutput(GPIOC, 1<<7);
 
-	//GPIO_TogglePinsOutput(GPIOD, 0);
-	GPIO_WritePinOutput(GPIOD, 1, FALSE);
+	GPIO_TogglePinsOutput(GPIOD, 2);
+	//GPIO_WritePinOutput(GPIOD, 1, FALSE);
 
 	Disp_Init();
 
 }
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void apptask_idle(void)
 {
 

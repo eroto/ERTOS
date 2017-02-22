@@ -13,6 +13,15 @@
 #include "fsl_gpio.h"
 #include "timers.h"
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void timers_init(void)
 {
 

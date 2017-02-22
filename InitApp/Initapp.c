@@ -39,6 +39,14 @@ void Initapp2(void);
 *************************/
 
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void InitApp1(void)
 {
 
@@ -51,6 +59,14 @@ void InitApp1(void)
 }
 
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void InitApp2(void)
 {
 	Disp_Init();

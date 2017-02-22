@@ -20,128 +20,104 @@ void spi_DMA_MasterTx(void);
 
 
 /*-------------------------------------
-* Function: spi_DMA_init
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_DMA_init(void)
 {
 
 }
 
 /*-------------------------------------
-* Function: spi_init
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_init(void)
 {
 
 }
 
 /*-------------------------------------
-* Function: spi_DMA_Config
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_DMA_Config(void)
 {
 
 }
 
 /*-------------------------------------
-* Function: spi_Config
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_Config(void)
 {
 
 }
 
 /*-------------------------------------
-* Function: spi_DMA_MasterTx
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_DMA_MasterTx(void)
 {
 
 }
 
 /*-------------------------------------
-* Function: spi_DMA_CancelMasterTx
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_DMA_CancelMasterTx(void)
 {
 
 }
 
 /*-------------------------------------
-* Function: spi_DMA_SlaveTx
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_DMA_SlaveTx(void)
 {
 
 }
 
 /*-------------------------------------
-* Function: spi_DMA_CancelSlaveTx
-* Desc:
-*
-* input:
-*
-*
-* return:
-*
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void spi_DMA_CancelSlaveTx(void)
 {
 

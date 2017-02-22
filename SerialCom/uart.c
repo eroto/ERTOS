@@ -30,12 +30,13 @@ T_UART_STATES uart_IDLE(void);
 status_t uart_Send(void);
 
 /*-------------------------------------
-* Function: uart_IDLE
-* Desc: T
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: uart_IDLE
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 T_UART_STATES uart_IDLE(void)
 {
 	T_UART_STATES NextSate = UART_INIT_ERROR;
@@ -77,12 +78,13 @@ T_UART_STATES uart_IDLE(void)
 }
 
 /*-------------------------------------
-* Function: uart_main
-* Desc: T
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: uart_main
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void uart_main(void)
 {
 	T_UART_STATES local_uart_state = UART_TXRX_ERROR;
@@ -135,17 +137,21 @@ void uart_main(void)
 }
 
 
+
 /*-------------------------------------
-* Function: uart_init
-* Desc: This function is called after
-* reset, and initialize the UART to
-* default values 115200bps, no parity
-* 8bits x char, one stop bit Tx enable
-* Rx enable
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: uart_init
+ *
+ * Desc: This function is called after
+ * 		reset, and initialize the UART to
+ * 		default values 115200bps, no parity
+ * 		8bits x char, one stop bit Tx enable
+ * 		Rx enable
+ *
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void uart_init(void)
 {
     UART_GetDefaultConfig(&user_config);
@@ -172,19 +178,22 @@ void uart_init(void)
     UART_init_pattern = UART_INIT_PATTERN;
 }
 
+
 /*-------------------------------------
-* Function: uart_Send
-* Desc: This function is called to
-* start a UART Tx request using UART1.
-* UART Handle shall be available/created
-* before using this interface
-* input:    lpub_data
-*           lub_size
-*
-* return:   1 kStatus_Fail
-*           0 kStatus_Success
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc: This function is called to
+ *		 start a UART Tx request using UART1.
+ * 		UART Handle shall be available/created
+ * 		before using this interface
+ *
+ * input:	lpub_data
+ * 			lub_size
+ *
+ * return:	1 kStatus_Fail
+ * 			0 kStatus_Success
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 status_t uart_Send(void)
 {
 	status_t result = kStatus_Fail;
@@ -196,19 +205,22 @@ status_t uart_Send(void)
 	return result;
 }
 
+
 /*-------------------------------------
-* Function: uart_Tx_Request
-* Desc: This function is called to
-* Queue a UART Tx operation by the application.
-* UART Handle shall be available/created
-* before using this interface
-* input:    lpub_data
-*           lub_size
-*
-* return:   1 kStatus_Fail
-*           0 kStatus_Success
-* Note:
-*-----------------------------------*/
+ * Function: uart_ReqTx
+ *
+ * Desc: This function is called to
+ * 		 Queue a UART Tx operation by the application.
+ * 		 UART Handle shall be available/created
+ * 		 before using this interface
+ *
+ * input:
+ *
+ * return:   1 kStatus_Fail
+*            0 kStatus_Success
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 status_t uart_ReqTx(uint8_t* lpub_data, uint8_t lub_size)
 {
 	status_t result = kStatus_Fail;
@@ -237,12 +249,13 @@ status_t uart_ReqTx(uint8_t* lpub_data, uint8_t lub_size)
 }
 
 /*-------------------------------------
-* Function: uart_Callback
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: uart_Callback
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 
 void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void *userData)
 {
@@ -263,12 +276,13 @@ void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void
 
 
 /*-------------------------------------
-* Function:
-* Desc:
-* input:
-* return:
-* Note:
-*-----------------------------------*/
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 //void UART1_IRQHandler(void)
 //{
 //    static volatile UartIRQ = 0;
