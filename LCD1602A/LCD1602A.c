@@ -76,14 +76,54 @@ void Disp_Clear(void)
 void Disp_SendCmd(uint8_t disp_command)
 {
 
-	uint8_t cmd_L = (uint8_t) (0x0F & disp_command);
-	uint8_t cmd_H = (uint8_t) (0xF0 & disp_command);
+	//uint8_t cmd_L = (uint8_t) (0x0F & disp_command);
+	//uint8_t cmd_H = (uint8_t) (0xF0 & disp_command);
+#ifndef LCD_8_DATA_LINES
+	uint8_t i = 0;
+#endif
+	uint8_t cmd_LH[2];
 
-	GPIO_SetPinsOutput(GPIOB, cmd_L);
-	GPIO_ClearPinsOutput(GPIOB, ~cmd_L);
+#ifdef LCD_8_DATA_LINES
+	cmd_LH[LOW_NIBBLE] = (uint8_t) (0x0F & disp_command); //Low
 
-	GPIO_SetPinsOutput(GPIOC, cmd_H);
-	GPIO_ClearPinsOutput(GPIOC, ~cmd_H);
+	cmd_LH[HIGH_NIBBLE] = (uint8_t) (0xF0 & disp_command); //High
+
+
+	GPIO_SetPinsOutput(GPIOB, cmd_LH[LOW_NIBBLE]);
+	GPIO_ClearPinsOutput(GPIOB, ~cmd_LH[LOW_NIBBLE]);
+
+	GPIO_SetPinsOutput(GPIOC, cmd_LH[HIGH_NIBBLE]);
+	GPIO_ClearPinsOutput(GPIOC, ~cmd_LH[HIGH_NIBBLE]);
+
+	Disp_send_enable();
+	Disp_wait_us(DISP_INIT_DELAY);
+#endif
+
+#ifndef LCD_8_DATA_LINES
+
+	cmd_LH[0] = (uint8_t) ((uint8_t)(0x0F & disp_command) << 4); //Low
+	cmd_LH[1] = (uint8_t) (0xF0 & disp_command); //High
+
+	for(i = 1; (i >= LOW_NIBBLE) && (i<= HIGH_NIBBLE); i--)
+	{
+
+	GPIO_SetPinsOutput(GPIOC, cmd_LH[i]);
+	GPIO_ClearPinsOutput(GPIOC, ~cmd_LH[i]);
+
+	Disp_send_enable();
+	Disp_wait_us(10);
+	}
+
+	Disp_wait_us(DISP_INIT_DELAY);
+
+#endif
+
+
+
+#ifdef LCD_8_DATA_LINES
+
+#endif
+
 
 
 }
@@ -98,32 +138,58 @@ void Disp_SendCmd(uint8_t disp_command)
  *-----------------------------------*/
 void Disp_Init(void)
 {
-	//Disp_FunctionSet();
+	memset(LCD1602_buffer, 0xFF, sizeof(LCD1602_buffer));
 
-
-	memset(LCD1602_buffer, 0xFF, 32);
-
+	//FunctionSet
+#ifdef LCD_8_DATA_LINES
 	Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
-	Disp_send_enable();
-	Disp_wait_us(DISP_INIT_DELAY);
+#endif
+#ifndef	LCD_8_DATA_LINES
+	Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
+#endif
 
 	//Disp_ON();
 	Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
-	Disp_send_enable();
-	Disp_wait_us(DISP_INIT_DELAY);
 
 	//Disp_Clear();
 	Disp_SendCmd(DISP_CLEAR);
-	Disp_send_enable();
-	Disp_wait_us(DISP_INIT_DELAY);
 
+	//Entry Mode Set
 	Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
-	Disp_send_enable();
-	Disp_wait_us(DISP_INIT_DELAY);
-
-
 
 }
+
+/*-------------------------------------
+ * Function: Disp_RefreshCfg
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void Disp_RefreshCfg(void)
+{
+	memset(LCD1602_buffer, 0xFF, 32);
+
+	//FunctionSet
+#ifdef LCD_8_DATA_LINES
+	Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
+#endif
+#ifndef	LCD_8_DATA_LINES
+	Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
+#endif
+
+	//Disp_ON();
+	Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
+
+	//Disp_Clear();
+	Disp_SendCmd(DISP_CLEAR);
+
+	//Entry Mode Set
+	Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
+
+}
+
 
 
 
@@ -153,18 +219,44 @@ void Disp_ON(void)
 void Disp_write_ASCII(ASCII_Char ASCII_character)
 {
 
-	uint8_t ASCII_L = (uint8_t) (0x0F & ASCII_character);
-	uint8_t ASCII_H = (uint8_t) (0xF0 & ASCII_character);
+#ifndef LCD_8_DATA_LINES
+	uint8_t i = 0;
+#endif
 
-	GPIO_WritePinOutput(GPIOA, 1, 1);
-	/**/
-	GPIO_SetPinsOutput(GPIOB, ASCII_L);
-	GPIO_ClearPinsOutput(GPIOB, ~ASCII_L);
+	ASCII_Char ASCII_LH[2];
 
-	GPIO_SetPinsOutput(GPIOC, ASCII_H);
-	GPIO_ClearPinsOutput(GPIOC, ~ASCII_H);
+	GPIO_WritePinOutput(GPIOA, 1, 1); /*Enable RS*/
+
+#ifdef LCD_8_DATA_LINES
+	ASCII_LH[LOW_NIBBLE] = (uint8_t) (0x0F & ASCII_character);
+	ASCII_LH[HIGH_NIBBLE] = (uint8_t) (0xF0 & ASCII_character);
+
+	GPIO_SetPinsOutput(GPIOB, ASCII_LH[LOW_NIBBLE]);
+	GPIO_ClearPinsOutput(GPIOB, ~ASCII_LH[LOW_NIBBLE]);
+
+	GPIO_SetPinsOutput(GPIOC, ASCII_LH[HIGH_NIBBLE]);
+	GPIO_ClearPinsOutput(GPIOC, ~ASCII_LH[HIGH_NIBBLE]);
 	Disp_send_enable();
-	GPIO_WritePinOutput(GPIOA, 1, 0);
+	Disp_wait_us(10);
+#endif
+
+#ifndef LCD_8_DATA_LINES
+	ASCII_LH[1] = (ASCII_Char) ((uint8_t)(0x0F & ASCII_character) << 4); //Low
+	ASCII_LH[0] = (ASCII_Char) (0xF0 & ASCII_character); //High
+
+
+	for(i = 0; i < 2; i++)
+	{
+
+		GPIO_SetPinsOutput(GPIOC, ASCII_LH[i]);
+		GPIO_ClearPinsOutput(GPIOC, ~ASCII_LH[i]);
+		Disp_send_enable();
+		Disp_wait_us(10);
+	}
+#endif
+
+	GPIO_WritePinOutput(GPIOA, 1, 0); /*Disable RS*/
+	Disp_wait_us(DISP_DELAY);
 }
 
 
@@ -276,113 +368,15 @@ void Disp_Main(void)
 
 	a = ++a;
 
+	i = 0;
 	while(LCD1602_buffer[i] != 0xFF)
 	{
 		Disp_write_ASCII(LCD1602_buffer[i]);
-		Disp_wait_us(20);
+		//Disp_wait_us(DISP_DELAY);
 		i = 1 + i;
 	}
 
 	Disp_SendCmd(DISP_RETURN_HOME);
-	Disp_send_enable();
-
-//	switch(x)
-//	{
-//	case 0:
-//
-//		/*Function Set*/
-//		Disp_FunctionSet();
-//		x= x +1;
-//		Disp_send_enable();
-//		break;
-//
-//	case 1:
-//
-//		/*Display ON*/
-//		Disp_ON();
-//
-//			x= x +1;
-//
-//			Disp_send_enable();
-//		break;
-
-//	case 3:
-//		/*Return Home*/
-//		GPIO_SetPinsOutput(GPIOB, 0x02);
-//		GPIO_ClearPinsOutput(GPIOB, (uint8_t)~0x02u);
-//
-//		GPIO_ClearPinsOutput(GPIOC, 0xF0);
-//
-//		x= x +1;
-//		Disp_send_enable();
-//		break;
-
-
-//		case 2:
-//
-//		/*Clear Display*/
-//		Disp_Clear();
-//
-//		x= x +1;
-//		Disp_send_enable();
-//		break;
-//
-//
-//	case 3:
-//
-//		/*Entry Mode Set*/
-//		GPIO_SetPinsOutput(GPIOB, 0x06);
-//		GPIO_ClearPinsOutput(GPIOB, (uint8_t)~0x06u);
-//
-//		x= 6;//x +1;
-//		Disp_send_enable();
-//		break;
-//
-//
-//	case 4:
-//
-//		/*Write an "H"*/
-//		GPIO_WritePinOutput(GPIOA, 1, 1);
-//		/**/
-//		GPIO_SetPinsOutput(GPIOB, 0x08);
-//		GPIO_ClearPinsOutput(GPIOB, (uint8_t)~0x08u);
-//
-//		GPIO_SetPinsOutput(GPIOC, 0x40);
-//		//GPIO_ClearPinsOutput(GPIOC, (uint8_t)~0x40u);
-//		x= x +1;
-//		Disp_send_enable();
-//		GPIO_WritePinOutput(GPIOA, 1, 0);
-//		break;
-//
-//	case 5:
-//
-//		/*Write an "o"*/
-//		GPIO_WritePinOutput(GPIOA, 1, 1);
-//		/**/
-//		GPIO_SetPinsOutput(GPIOB, 0x0E);
-//		GPIO_ClearPinsOutput(GPIOB, (uint8_t)~0x0Eu);
-//
-//		GPIO_SetPinsOutput(GPIOC, 0x30);
-//		GPIO_ClearPinsOutput(GPIOC, (uint8_t)~0x30u);
-//		x= x +1;
-//		Disp_send_enable();
-//		GPIO_WritePinOutput(GPIOA, 1, 0);
-//		x= x +1;
-//
-//		break;
-//
-//	case 6:
-//
-//			//x= x +1;
-//
-//			break;
-//
-//
-//	default:
-//
-//		break;
-//
-//	}
 
 }
 
@@ -401,7 +395,7 @@ void Disp_send_enable(void)
 	uint32_t i;
 	GPIO_WritePinOutput(GPIOC, 0, TRUE);
 
-	Disp_wait_us(20);
+	Disp_wait_us(ENABLE_WITH);
 
 	GPIO_WritePinOutput(GPIOC, 0, FALSE);
 }

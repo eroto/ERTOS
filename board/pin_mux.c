@@ -42,7 +42,7 @@ void BOARD_InitPins(void)
     /* Ungate the port clock */
     CLOCK_EnableClock(kCLOCK_PortA);
     /* Affects PORTA_PCR1 register */
-    PORT_SetPinMux(PORTA, 1u, kPORT_MuxAlt2);
+//    PORT_SetPinMux(PORTA, 1u, kPORT_MuxAlt2);
     /* Affects PORTA_PCR2 register */
-    PORT_SetPinMux(PORTA, 2u, kPORT_MuxAlt2);
+//    PORT_SetPinMux(PORTA, 2u, kPORT_MuxAlt2);
 }

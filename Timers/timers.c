@@ -25,7 +25,7 @@
 void timers_init(void)
 {
 
-	/*Timers stopped ui Debug mode*/
+	/*Timers stopped in Debug mode*/
 	pit_config_t Sch_Pit_cfg;
 
 	Sch_Pit_cfg.enableRunInDebug = FALSE;

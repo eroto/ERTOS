@@ -49,13 +49,11 @@ void Initapp2(void);
  *-----------------------------------*/
 void InitApp1(void)
 {
-
 	COP_Disable(SIM);
 	timers_init();
 	io_init();
 	uart_init();
 	rtc_init();
-
 }
 
 

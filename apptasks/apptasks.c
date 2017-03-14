@@ -15,6 +15,7 @@
 
 uint8_t value = 1;
 uint32_t deb = 0;
+static uint8_t a = 0;
 
 
 #define PTB_Dx_clear	0x0Fu
@@ -65,13 +66,27 @@ void apptask_100ms(void)
 	//GPIO_TogglePinsOutput(GPIOC, 1<<3);
 	RTC_SendClock();
 
+
 	//PublicSendData[0] = '-';
 
 	//PublicSendData[1] = io_Read_Pin(GPIOB,8);
 
 	//uart_ReqTx(PublicSendData, 2);
 
-	Disp_Main();
+	if(a >= 20)
+	{
+		Disp_RefreshCfg();
+		a = 0;
+
+		Disp_wait_us(80);
+	}
+	a ++;
+
+
+		Disp_Main();
+
+
+
 }
 
 /*-------------------------------------
@@ -91,7 +106,7 @@ void apptask_1s(void)
 	GPIO_TogglePinsOutput(GPIOD, 2);
 	//GPIO_WritePinOutput(GPIOD, 1, FALSE);
 
-	Disp_Init();
+
 
 }
 
