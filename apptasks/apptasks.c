@@ -12,10 +12,11 @@
 #include "rtc.h"
 #include "io.h"
 #include "LCD1602A.h"
+#include "relayctrl.h"
 
 uint8_t value = 1;
 uint32_t deb = 0;
-static uint8_t a = 0;
+
 
 
 #define PTB_Dx_clear	0x0Fu
@@ -73,20 +74,7 @@ void apptask_100ms(void)
 
 	//uart_ReqTx(PublicSendData, 2);
 
-	if(a >= 20)
-	{
-		Disp_RefreshCfg();
-		a = 0;
-
-		Disp_wait_us(80);
-	}
-	a ++;
-
-
-		Disp_Main();
-
-
-
+	Disp_Main();
 }
 
 /*-------------------------------------
@@ -101,10 +89,9 @@ void apptask_1s(void)
 {
 	static uint8_t pin_val = 1;
 
-	//GPIO_TogglePinsOutput(GPIOC, 1<<7);
-
 	GPIO_TogglePinsOutput(GPIOD, 2);
-	//GPIO_WritePinOutput(GPIOD, 1, FALSE);
+
+	relayctrl_main();
 
 
 

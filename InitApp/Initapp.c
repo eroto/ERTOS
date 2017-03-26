@@ -68,6 +68,7 @@ void InitApp1(void)
 void InitApp2(void)
 {
 	Disp_Init();
+	relayctrl_init();
 	Schr_Init();
 
 }

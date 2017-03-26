@@ -20,15 +20,46 @@ void Disp_send_enable(void);
 void Disp_Clear(void);
 void Disp_Main(void);
 void Disp_FunctionSet(void);
+void Disp_Read_BF(void);
 
 
 uint8_t LCD1602_buffer[32];
 volatile uint8_t x = 0;
+uint8_t refresh_ctr = 0;
 
+/*-------------------------------------
+ * Function: Disp_Init
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void Disp_Init(void)
+{
+	memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+	//FunctionSet
+#ifdef LCD_8_DATA_LINES
+	Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
+#endif
+#ifndef	LCD_8_DATA_LINES
+	Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
+#endif
+
+	//Disp_ON();
+	Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
+
+	//Disp_Clear();
+	//Disp_SendCmd(DISP_CLEAR);
+
+	//Entry Mode Set
+	Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
+}
 
 
 /*-------------------------------------
- * Function: func_name
+ * Function: Disp_FunctionSet
  * Desc:
  * input:
  * return:
@@ -63,6 +94,104 @@ void Disp_Clear(void)
 	GPIO_ClearPinsOutput(GPIOC, 0xF0);
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void Disp_Read_BF(void)
+{
+	uint8_t BF = 1;
+	uint8_t i = 0;
+	uint16_t to = 0;
+
+	GPIO_WritePinOutput(GPIOC, 7, 0); /*Write D7 to 0 before reading*/
+
+	/*Change D7 to Input*/
+	io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalInput, kPORT_PullDown); /*LCD 1602 D7*/
+
+	/*Read BusyFlag BF*/
+	 //GPIO_WritePinOutput(GPIOA, 1, 0); /*LCD RS to 0*/
+	 GPIO_WritePinOutput(GPIOA, 2, 1); /*LCD RW to 1*/
+
+
+#ifdef	LCD_8_DATA_LINES
+	/*Read BF while is 1*/
+	 do
+	 {
+		 /*Send Enable*/
+		 GPIO_WritePinOutput(GPIOC, 0, TRUE);
+		 __asm("nop");
+		 to = 1 + to;
+		 BF =  GPIO_ReadPinInput(GPIOC, 7); /*Read Busy Flag D7*/
+		 __asm("nop");
+		 GPIO_WritePinOutput(GPIOC, 0, FALSE);
+
+		 if(to > 900u)
+		 {
+			BF = 0u;
+		 }
+	 }while(BF);
+#endif
+
+#ifndef	LCD_8_DATA_LINES
+	/*Read BF while is 1*/
+	 do
+	 {
+
+		 /*Check BF*/
+		for(i = 0; i < 2; i++)
+		{
+			/*Send Enable*/
+			GPIO_WritePinOutput(GPIOC, 0, TRUE);
+			 to = 1 + to;
+			 if(i == 0)
+			 {
+				 BF =  GPIO_ReadPinInput(GPIOC, 7); /*Read Busy Flag D7*/
+			 }
+			 else
+			 {
+				__asm("nop");
+				__asm("nop");
+				__asm("nop");
+				__asm("nop");
+				__asm("nop");
+				__asm("nop");
+				__asm("nop");
+				__asm("nop");
+				__asm("nop");
+			 }
+//			 if(i == 0)
+//			 {
+//				 BF =  GPIO_ReadPinInput(GPIOC, 7); /*Read Busy Flag D7*/
+//			 }
+			 GPIO_WritePinOutput(GPIOC, 0, FALSE);
+		}
+
+		 if(to > 1500u)
+		 {
+			 __asm("nop");
+			 __asm("nop");
+			 BF = 0u;
+			 __asm("nop");
+			 __asm("nop");
+		 }
+
+	 }while(BF);
+
+#endif
+
+
+
+	/*Change D7 to Output*/
+	io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D7*/
+
+	 //GPIO_WritePinOutput(GPIOA, 1, 0); /*LCD RS to 0*/
+	 GPIO_WritePinOutput(GPIOA, 2, 0); /*LCD RW to 0*/
+}
 
 
 /*-------------------------------------
@@ -76,16 +205,16 @@ void Disp_Clear(void)
 void Disp_SendCmd(uint8_t disp_command)
 {
 
-	//uint8_t cmd_L = (uint8_t) (0x0F & disp_command);
-	//uint8_t cmd_H = (uint8_t) (0xF0 & disp_command);
 #ifndef LCD_8_DATA_LINES
 	uint8_t i = 0;
 #endif
 	uint8_t cmd_LH[2];
 
+	GPIO_WritePinOutput(GPIOA, 1, 0); /*Enable RS*/
+	GPIO_WritePinOutput(GPIOA, 2, 0); /*LCD RW to 0*/
+
 #ifdef LCD_8_DATA_LINES
 	cmd_LH[LOW_NIBBLE] = (uint8_t) (0x0F & disp_command); //Low
-
 	cmd_LH[HIGH_NIBBLE] = (uint8_t) (0xF0 & disp_command); //High
 
 
@@ -96,7 +225,6 @@ void Disp_SendCmd(uint8_t disp_command)
 	GPIO_ClearPinsOutput(GPIOC, ~cmd_LH[HIGH_NIBBLE]);
 
 	Disp_send_enable();
-	Disp_wait_us(DISP_INIT_DELAY);
 #endif
 
 #ifndef LCD_8_DATA_LINES
@@ -106,56 +234,14 @@ void Disp_SendCmd(uint8_t disp_command)
 
 	for(i = 1; (i >= LOW_NIBBLE) && (i<= HIGH_NIBBLE); i--)
 	{
-
-	GPIO_SetPinsOutput(GPIOC, cmd_LH[i]);
-	GPIO_ClearPinsOutput(GPIOC, ~cmd_LH[i]);
-
-	Disp_send_enable();
-	Disp_wait_us(10);
+		GPIO_SetPinsOutput(GPIOC, cmd_LH[i]);
+		GPIO_ClearPinsOutput(GPIOC, ~cmd_LH[i]);
+		Disp_send_enable();
 	}
 
-	Disp_wait_us(DISP_INIT_DELAY);
-
 #endif
-
-
-
-#ifdef LCD_8_DATA_LINES
-
-#endif
-
-
-
-}
-
-/*-------------------------------------
- * Function: func_name
- * Desc:
- * input:
- * return:
- * Note:
- * SRS:
- *-----------------------------------*/
-void Disp_Init(void)
-{
-	memset(LCD1602_buffer, 0xFF, sizeof(LCD1602_buffer));
-
-	//FunctionSet
-#ifdef LCD_8_DATA_LINES
-	Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
-#endif
-#ifndef	LCD_8_DATA_LINES
-	Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
-#endif
-
-	//Disp_ON();
-	Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
-
-	//Disp_Clear();
-	Disp_SendCmd(DISP_CLEAR);
-
-	//Entry Mode Set
-	Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
+	/* Read Busy Flag*/
+	Disp_Read_BF();
 
 }
 
@@ -169,7 +255,10 @@ void Disp_Init(void)
  *-----------------------------------*/
 void Disp_RefreshCfg(void)
 {
-	memset(LCD1602_buffer, 0xFF, 32);
+	memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+	LCD1602_buffer[16] = ASCII_Money;
+	LCD1602_buffer[31] = ASCII_x;
 
 	//FunctionSet
 #ifdef LCD_8_DATA_LINES
@@ -237,7 +326,7 @@ void Disp_write_ASCII(ASCII_Char ASCII_character)
 	GPIO_SetPinsOutput(GPIOC, ASCII_LH[HIGH_NIBBLE]);
 	GPIO_ClearPinsOutput(GPIOC, ~ASCII_LH[HIGH_NIBBLE]);
 	Disp_send_enable();
-	Disp_wait_us(10);
+	//Disp_wait_us(10);
 #endif
 
 #ifndef LCD_8_DATA_LINES
@@ -247,16 +336,15 @@ void Disp_write_ASCII(ASCII_Char ASCII_character)
 
 	for(i = 0; i < 2; i++)
 	{
-
 		GPIO_SetPinsOutput(GPIOC, ASCII_LH[i]);
 		GPIO_ClearPinsOutput(GPIOC, ~ASCII_LH[i]);
 		Disp_send_enable();
-		Disp_wait_us(10);
+		Disp_wait_us(5);
 	}
 #endif
-
 	GPIO_WritePinOutput(GPIOA, 1, 0); /*Disable RS*/
-	Disp_wait_us(DISP_DELAY);
+
+	Disp_Read_BF();
 }
 
 
@@ -277,7 +365,7 @@ void Disp_wait_us(uint64_t usec_time)
 	if(usec_time >= 50)
 	{
 
-		usec_time = usec_time - 21;
+		usec_time = usec_time - 25;
 		PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, USEC_TO_COUNT(usec_time, CLK_SRC_HZ));
 
 		PIT_StartTimer(PIT, kPIT_Chnl_1);
@@ -296,8 +384,6 @@ void Disp_wait_us(uint64_t usec_time)
 		{
 			__asm("nop");
 			counts--;
-			__asm("nop");
-			__asm("nop");
 		}
 
 	}
@@ -325,16 +411,16 @@ void Disp_Main(void)
 	uint8_t  secd1;
 	uint8_t  secd2;
 
-	//rtc_datetime_t *Date_time
-
-	//rtc_GetDatetime(&Date_time);
-
-	//uint8_t disp_hr = Date_time->hour;
-	//uint8_t disp_min = Date_time->minute;
-	//uint8_t disp_sec = Date_time->second;
 
 
-	//LCD1602_buffer[8] = ASCII_0;
+	refresh_ctr = 1 + refresh_ctr;
+
+	if(refresh_ctr >= 10)
+	{
+		Disp_RefreshCfg();
+		refresh_ctr = 0;
+	}
+
 
 	hrd1 = (PublicSendData[0] / 10) + 0x30;
 	hrd2 = (PublicSendData[0] % 10) + 0x30;
@@ -366,13 +452,18 @@ void Disp_Main(void)
 		LCD1602_buffer[9] = a + 0x30;
 	}
 
-	a = ++a;
+	a = 1 + a;
 
 	i = 0;
 	while(LCD1602_buffer[i] != 0xFF)
+	//while(i < 32u)
 	{
+		if(i == 16u)
+		{
+			Disp_SendCmd(DISP_DDRAM_ADDRESS|0x40u);
+		}
+
 		Disp_write_ASCII(LCD1602_buffer[i]);
-		//Disp_wait_us(DISP_DELAY);
 		i = 1 + i;
 	}
 
@@ -392,7 +483,6 @@ void Disp_Main(void)
 void Disp_send_enable(void)
 {
 
-	uint32_t i;
 	GPIO_WritePinOutput(GPIOC, 0, TRUE);
 
 	Disp_wait_us(ENABLE_WITH);
