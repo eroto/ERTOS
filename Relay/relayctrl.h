@@ -7,13 +7,14 @@
 
 #include <stdint.h>
 #include "fsl_rtc.h"
+#include "rtc.h"
 
 #ifndef RELAYCTRL_H_
 #define RELAYCTRL_H_
 
 
-relayctrl_init(void);
-relayctrl_main(void);
+void relayctrl_init(void);
+void relayctrl_main(void);
 
 
 

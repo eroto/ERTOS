@@ -87,13 +87,10 @@ void apptask_100ms(void)
  *-----------------------------------*/
 void apptask_1s(void)
 {
-	static uint8_t pin_val = 1;
 
 	GPIO_TogglePinsOutput(GPIOD, 2);
 
 	relayctrl_main();
-
-
 
 }
 

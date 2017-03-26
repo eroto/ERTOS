@@ -12,6 +12,7 @@
 #include "relayctrl.h"
 
 e_RELAY_CTRL_STATES relay_ctrl_state;
+static rtc_datetime_t relayTemp_date;
 
 uint16_t relaytctrl_GetTime(void);
 
@@ -25,7 +26,7 @@ uint16_t relaytctrl_GetTime(void);
  * Note:
  * SRS:
  *-----------------------------------*/
-relayctrl_init(void)
+void relayctrl_init(void)
 {
 	relay_ctrl_state = RELAY_CTRL_INACTIVE;
 }
@@ -39,7 +40,7 @@ relayctrl_init(void)
  * Note:
  * SRS:
  *-----------------------------------*/
-relayctrl_main(void)
+void relayctrl_main(void)
 {
 
 	e_RELAY_CTRL_STATES next_state = RELAY_CTRL_INACTIVE;
@@ -115,13 +116,12 @@ relayctrl_main(void)
  *-----------------------------------*/
 uint16_t relaytctrl_GetTime(void)
 {
-	rtc_datetime_t *loc_Datetime;
 	uint16_t hr_min = 0;
 
-	rtc_GetDatetime(loc_Datetime);
+	rtc_GetDatetime(&relayTemp_date);
 
-	hr_min = (uint16_t)(((uint16_t)loc_Datetime->hour) << 8u);
-	hr_min |= loc_Datetime->minute;
+	hr_min = (uint16_t)(((uint16_t)relayTemp_date.hour) << 8u);
+	hr_min |= relayTemp_date.minute;
 
 	return (hr_min);
 }
