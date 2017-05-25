@@ -6,7 +6,6 @@
  */
 
 #include <string.h>
-#include "apptasks.h"
 #include "fsl_gpio.h"
 #include "fsl_smc.h"
 #include "fsl_pit.h"
@@ -16,6 +15,7 @@
 #include "LCD1602A.h"
 #include "relayctrl.h"
 #include "Schr.h"
+#include "apptasks.h"
 
 uint8_t value = 1;
 uint32_t deb = 0;

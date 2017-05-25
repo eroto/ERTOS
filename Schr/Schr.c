@@ -18,9 +18,8 @@
 /******************************************************************************
 *   Global Variable Definitions
 ******************************************************************************/
-
-
-extern volatile SCHM_BOOLEAN re_mngExecflag;
+T_TaskPowerModeType  re_curOpMode;
+volatile SCHM_BOOLEAN re_mngExecflag;
 
 /* Manager/Application main function list */
 const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =

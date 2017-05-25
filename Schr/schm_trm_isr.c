@@ -40,7 +40,7 @@
 *   Global Variable Definitions
 ******************************************************************************/
 /* Module execution flag */
-SCHM_BOOLEAN re_mngExecflag;
+//SCHM_BOOLEAN re_mngExecflag;
 
 /******************************************************************************
 *   Static Variable Definitions

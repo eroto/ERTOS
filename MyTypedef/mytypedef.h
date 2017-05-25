@@ -1,8 +1,8 @@
 /*
  * mytypedef.h
  *
- *  Created on: 17/08/2016
- *      Author: uid87057
+ *  Created on: 22/05/2017
+ *      Author: Enrique
  */
 
 #ifndef MYTYPEDEF_H_

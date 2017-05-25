@@ -16,6 +16,7 @@ uart_config_t user_config;
 uart_handle_t g_uartHandle;
 uint8_t UartSendBuffer[UART_BUFFER_MAX_SIZE];
 uart_transfer_t sendXfer;
+uint8_t PublicSendData[UART_BUFFER_MAX_SIZE];
 
 static T_UART_STATES uart_State = UART_IDLE;
 static uint8_t UART_init_pattern = 0x00;

@@ -5,8 +5,8 @@
  *      Author: uid87057
  */
 
-#ifndef SCHR_H_
-#define SCHR_H_
+#ifndef SCHR_H
+#define SCHR_H
 
 #include <stdint.h>
 #include "schm_trm_isr.h"
@@ -31,13 +31,9 @@ typedef enum
 }T_TaskPowerModeType;
 
 
-typedef enum
-{
-    SCHM_FALSE = 0,
-    SCHM_TRUE  = 1
-}SCHM_BOOLEAN;
 
-T_TaskPowerModeType  re_curOpMode = HIGH_POWER;
+
+extern T_TaskPowerModeType  re_curOpMode;
 
 /******************************************************************************
 *   Macro Definitions

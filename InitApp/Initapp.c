@@ -5,12 +5,14 @@
  *      Author: uid87057
  */
 
+
 #include <stdint.h>
+#include "Initapp.h"
+#include "io.h"
 #include "mytypedef.h"
 #include "timers.h"
-#include "Initapp.h"
 #include "Schr.h"
-#include "io.h"
+
 #include "fsl_cop.h"
 #include "fsl_smc.h"
 #include "uart.h"
@@ -30,7 +32,7 @@ port_pin_config_t Test_PIN_Setup;
 *  Function Declaration   *
 *************************/
 void InitApp1(void);
-void Initapp2(void);
+void InitApp2(void);
 
 
 
@@ -51,8 +53,8 @@ void Initapp2(void);
 void InitApp1(void)
 {
 	COP_Disable(SIM);
-	timers_init();
 	io_init();
+	timers_init();
 	uart_init();
 	rtc_init();
 

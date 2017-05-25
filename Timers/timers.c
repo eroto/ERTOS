@@ -14,6 +14,10 @@
 #include "timers.h"
 
 
+
+void timers_init(void);
+void PIT_INIT_LP(void);
+
 /*-------------------------------------
  * Function: func_name
  * Desc:

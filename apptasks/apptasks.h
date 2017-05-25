@@ -5,16 +5,16 @@
  *      Author: uid87057
  */
 
-#ifndef SOURCE_APPTASKS_H_
-#define SOURCE_APPTASKS_H_
+#ifndef APPTASKS_H_
+#define APPTASKS_H_
 
 
-void apptask_5ms(void);
-void apptask_20ms(void);
-void apptask_100ms(void);
-void apptask_1s(void);
-void LP_apptask_1s(void);
-void apptask_idle(void);
+extern void apptask_5ms(void);
+extern void apptask_20ms(void);
+extern void apptask_100ms(void);
+extern void apptask_1s(void);
+extern void LP_apptask_1s(void);
+extern void apptask_idle(void);
 
 
 #endif /* SOURCE_APPTASKS_H_ */

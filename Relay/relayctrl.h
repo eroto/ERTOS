@@ -13,8 +13,8 @@
 #define RELAYCTRL_H_
 
 
-void relayctrl_init(void);
-void relayctrl_main(void);
+extern void relayctrl_init(void);
+extern void relayctrl_main(void);
 
 
 

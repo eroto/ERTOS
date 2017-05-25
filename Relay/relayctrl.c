@@ -11,6 +11,11 @@
 #include "mytypedef.h"
 #include "relayctrl.h"
 
+
+
+void relayctrl_init(void);
+void relayctrl_main(void);
+
 e_RELAY_CTRL_STATES relay_ctrl_state;
 static rtc_datetime_t relayTemp_date;
 

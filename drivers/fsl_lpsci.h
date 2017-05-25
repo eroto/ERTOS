@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
+ * Copyright 2016-2017 NXP
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -12,7 +12,7 @@
  *   list of conditions and the following disclaimer in the documentation and/or
  *   other materials provided with the distribution.
  *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+ * o Neither the name of the copyright holder nor the names of its
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
@@ -37,15 +37,14 @@
  * @{
  */
 
-
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief LPSCI driver version 2.0.1. */
-#define FSL_LPSCI_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
+/*! @brief LPSCI driver version 2.0.3. */
+#define FSL_LPSCI_DRIVER_VERSION (MAKE_VERSION(2, 0, 3))
 /*@{*/
 
 /*! @brief Error codes for the LPSCI driver. */
@@ -63,7 +62,7 @@ enum _lpsci_status
     kStatus_LPSCI_RxRingBufferOverrun =
         MAKE_STATUS(kStatusGroup_LPSCI, 7),                               /*!< LPSCI RX software ring buffer overrun. */
     kStatus_LPSCI_RxHardwareOverrun = MAKE_STATUS(kStatusGroup_LPSCI, 8), /*!< LPSCI RX receiver overrun. */
-    kStatus_LPSCI_NoiseError = MAKE_STATUS(kStatusGroup_LPSCI, 9),       /*!< LPSCI noise error. */
+    kStatus_LPSCI_NoiseError = MAKE_STATUS(kStatusGroup_LPSCI, 9),        /*!< LPSCI noise error. */
     kStatus_LPSCI_FramingError = MAKE_STATUS(kStatusGroup_LPSCI, 10),     /*!< LPSCI framing error. */
     kStatus_LPSCI_ParityError = MAKE_STATUS(kStatusGroup_LPSCI, 11),      /*!< LPSCI parity error. */
 };
@@ -102,14 +101,16 @@ enum _lpsci_interrupt_enable_t
     kLPSCI_NoiseErrorInterruptEnable = (UART0_C3_NEIE_MASK << 16),   /*!< Noise error flag interrupt. */
     kLPSCI_FramingErrorInterruptEnable = (UART0_C3_FEIE_MASK << 16), /*!< Framing error flag interrupt. */
     kLPSCI_ParityErrorInterruptEnable = (UART0_C3_PEIE_MASK << 16),  /*!< Parity error flag interrupt. */
-    kLPSCI_AllInterruptsEnable = kLPSCI_RxActiveEdgeInterruptEnable | kLPSCI_TxDataRegEmptyInterruptEnable
-                                 | kLPSCI_TransmissionCompleteInterruptEnable | kLPSCI_RxDataRegFullInterruptEnable
-                                 | kLPSCI_IdleLineInterruptEnable | kLPSCI_RxOverrunInterruptEnable | kLPSCI_NoiseErrorInterruptEnable
-                                 | kLPSCI_FramingErrorInterruptEnable | kLPSCI_ParityErrorInterruptEnable
+    kLPSCI_AllInterruptsEnable = kLPSCI_RxActiveEdgeInterruptEnable | kLPSCI_TxDataRegEmptyInterruptEnable |
+                                 kLPSCI_TransmissionCompleteInterruptEnable | kLPSCI_RxDataRegFullInterruptEnable |
+                                 kLPSCI_IdleLineInterruptEnable | kLPSCI_RxOverrunInterruptEnable |
+                                 kLPSCI_NoiseErrorInterruptEnable | kLPSCI_FramingErrorInterruptEnable |
+                                 kLPSCI_ParityErrorInterruptEnable
 #if defined(FSL_FEATURE_LPSCI_HAS_LIN_BREAK_DETECT) && FSL_FEATURE_LPSCI_HAS_LIN_BREAK_DETECT
-                                 | kLPSCI_LinBreakInterruptEnable
+                                 |
+                                 kLPSCI_LinBreakInterruptEnable
 #endif
-                                 ,
+    ,
 };
 
 /*!
@@ -506,8 +507,8 @@ static inline void LPSCI_WriteByte(UART0_Type *base, uint8_t data)
 /*!
  * @brief Reads the RX data register.
  *
- * This function polls the RX register, waits for the RX register to be full, and
- * reads data from the TX register.
+ * This function reads data from the RX register directly. The upper layer must
+ * ensure that the RX register is full before calling this function.
  *
  * @param base LPSCI peripheral base address.
  * @return Data read from RX data register.
@@ -534,10 +535,10 @@ static inline uint8_t LPSCI_ReadByte(UART0_Type *base)
 void LPSCI_WriteBlocking(UART0_Type *base, const uint8_t *data, size_t length);
 
 /*!
-* @brief Reads the RX register using a non-blocking method.
+* @brief Reads the RX register using a blocking method.
 *
-* This function reads data from the TX register directly. The upper layer must
-* ensure that the RX register is full before calling this function.
+* This function polls the RX register, waits for the RX register to be full, and
+* reads data from the RX register.
 *
 * @param base LPSCI peripheral base address.
 * @param data Start address of the buffer to store the received data.

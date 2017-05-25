@@ -1,12 +1,12 @@
 /*
  * io.h
  *
- *  Created on: 23/09/2016
+ *  Created on: 20/05/2017
  *      Author: Enrique
  */
 
-#ifndef IO_H_
-#define IO_H_
+#ifndef IO_IO_H_
+#define IO_IO_H_
 
 #include "fsl_common.h"
 #include "fsl_clock.h"

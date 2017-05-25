@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * All rights reserved.
+ * Copyright 2016-2017 NXP
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -12,8 +12,8 @@
  *   list of conditions and the following disclaimer in the documentation and/or
  *   other materials provided with the distribution.
  *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
- *   contributors may be used tom  endorse or promote products derived from this
+ * o Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -37,19 +37,20 @@
  * @{
  */
 
-
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief SPI driver version 2.0.1. */
-#define FSL_SPI_DRIVER_VERSION (MAKE_VERSION(2, 0, 1))
+/*! @brief SPI driver version 2.0.3. */
+#define FSL_SPI_DRIVER_VERSION (MAKE_VERSION(2, 0, 3))
 /*@}*/
 
+#ifndef SPI_DUMMYDATA
 /*! @brief SPI dummy transfer data, the data is sent while txBuff is NULL. */
 #define SPI_DUMMYDATA (0xFFU)
+#endif
 
 /*! @brief Return status for the SPI driver.*/
 enum _spi_status
@@ -129,10 +130,10 @@ enum _spi_flags
 #if defined(FSL_FEATURE_SPI_HAS_FIFO) && FSL_FEATURE_SPI_HAS_FIFO
     kSPI_RxFifoNearFullFlag = SPI_S_RNFULLF_MASK,  /*!< Rx FIFO near full */
     kSPI_TxFifoNearEmptyFlag = SPI_S_TNEAREF_MASK, /*!< Tx FIFO near empty */
-    kSPI_RxFifoFullFlag = SPI_S_TXFULLF_MASK,      /*!< Rx FIFO full */
-    kSPI_TxFifoEmptyFlag = SPI_S_RFIFOEF_MASK,     /*!< Tx FIFO empty */
+    kSPI_TxFifoFullFlag = SPI_S_TXFULLF_MASK,      /*!< Tx FIFO full */
+    kSPI_RxFifoEmptyFlag = SPI_S_RFIFOEF_MASK,     /*!< Rx FIFO empty */
     kSPI_TxFifoError = SPI_CI_TXFERR_MASK << 8U,   /*!< Tx FIFO error */
-    kSPI_RxFifoError = SPI_CI_RXFERR_MASK << 8U,   /*!< Rx FIFO Overflow */
+    kSPI_RxFifoError = SPI_CI_RXFERR_MASK << 8U,   /*!< Rx FIFO error */
     kSPI_TxOverflow = SPI_CI_TXFOF_MASK << 8U,     /*!< Tx FIFO Overflow */
     kSPI_RxOverflow = SPI_CI_RXFOF_MASK << 8U      /*!< Rx FIFO Overflow */
 #endif                                             /* FSL_FEATURE_SPI_HAS_FIFO */
@@ -580,11 +581,7 @@ status_t SPI_MasterTransferBlocking(SPI_Type *base, spi_transfer_t *xfer);
  *
  * @note The API immediately returns after transfer initialization is finished.
  * Call SPI_GetStatusIRQ() to get the transfer status.
- * @note If using the SPI with FIFO for the interrupt transfer, the transfer size is the integer times of the watermark.
- * Otherwise,
- * the last data may be lost because it cannot generate an interrupt request. Users can also call the functional API to
- * get the last
- * received data.
+ * @note If SPI transfer data frame size is 16 bits, the transfer size cannot be an odd number.
  *
  * @param base SPI peripheral base address.
  * @param handle pointer to spi_master_handle_t structure which stores the transfer state
@@ -643,11 +640,7 @@ void SPI_SlaveTransferCreateHandle(SPI_Type *base,
  *
  * @note The API returns immediately after the transfer initialization is finished.
  * Call SPI_GetStatusIRQ() to get the transfer status.
- * @note If using the SPI with FIFO for the interrupt transfer, the transfer size is the integer times the watermark.
- * Otherwise,
- * the last data may be lost because it cannot generate an interrupt request. Call the functional API to get the last
- * several
- * receive data.
+ * @note If SPI transfer data frame size is 16 bits, the transfer size cannot be an odd number.
  *
  * @param base SPI peripheral base address.
  * @param handle pointer to spi_master_handle_t structure which stores the transfer state
