@@ -46,3 +46,4 @@ C:\Users\Enrique\Documents\GitHub\ERTOS\Debug\apptasks\*.*
 *.d
 Debug/makefile
 Debug/sources.mk
+/Debug/
