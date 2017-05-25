@@ -46,6 +46,8 @@ void io_init(void)
 	io_Pin_Cfg(PORT_B, 1, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D1*/
 	io_Pin_Cfg(PORT_B, 2, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D2*/
 	io_Pin_Cfg(PORT_B, 3, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D3*/
+#else
+	io_Pin_Cfg(PORT_B, 0, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN1*/
 #endif
 
 	io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput, kPORT_PullUp); /*LCD 1602 E*/

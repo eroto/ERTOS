@@ -12,6 +12,7 @@
 #include "Schr.h"
 #include "io.h"
 #include "fsl_cop.h"
+#include "fsl_smc.h"
 #include "uart.h"
 #include "rtc.h"
 #include "LCD1602A.h"
@@ -54,6 +55,9 @@ void InitApp1(void)
 	io_init();
 	uart_init();
 	rtc_init();
+
+	SMC_SetPowerModeProtection(SMC,kSMC_AllowPowerModeVlp);
+
 }
 
 

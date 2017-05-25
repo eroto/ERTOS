@@ -9,5 +9,6 @@
 #define TIMERS_H_
 
 void timers_init(void);
+void PIT_INIT_LP(void);
 
 #endif /* TIMERS_H_ */

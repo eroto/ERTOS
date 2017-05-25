@@ -33,7 +33,7 @@ void timers_init(void)
 
 	PIT_Init(PIT, (pit_config_t *) &Sch_Pit_cfg);
 
-	PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, MSEC_TO_COUNT(5,PIT_CLK_SRC_HZ));
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, MSEC_TO_COUNT(5,PIT_CLK_SRC_HZ_HP));
 
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
 
@@ -41,4 +41,12 @@ void timers_init(void)
 
 	PIT_StopTimer(PIT, kPIT_Chnl_0);
 
+}
+
+
+void PIT_INIT_LP(void)
+{
+	PIT_StopTimer(PIT, kPIT_Chnl_0);
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, MSEC_TO_COUNT(100,PIT_CLK_SRC_HZ_LP));
+	PIT_StartTimer(PIT, kPIT_Chnl_0);
 }

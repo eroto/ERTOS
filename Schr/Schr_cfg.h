@@ -19,7 +19,8 @@
 /*  1: enable tick frozzen, 
     0: disable tick frozzen */
 #define FROZEEN_TICK	1 
-#define PIT_CLK_SRC_HZ	((uint64_t)24000000)
+#define PIT_CLK_SRC_HZ_HP	((uint64_t)24000000)
+#define PIT_CLK_SRC_HZ_LP	((uint64_t)800000)
 
 
 #endif

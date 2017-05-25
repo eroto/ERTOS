@@ -13,6 +13,7 @@ void apptask_5ms(void);
 void apptask_20ms(void);
 void apptask_100ms(void);
 void apptask_1s(void);
+void LP_apptask_1s(void);
 void apptask_idle(void);
 
 
