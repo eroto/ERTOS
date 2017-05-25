@@ -15,6 +15,8 @@
 #include "LCD1602A.h"
 #include "relayctrl.h"
 #include "Schr.h"
+#include "pm.h"
+#include "timers.h"
 #include "apptasks.h"
 
 uint8_t value = 1;
@@ -102,7 +104,7 @@ void apptask_1s(void)
 
 	LowPowerMode_Ctr++;
 
-	if(LowPowerMode_Ctr >= 20)
+	if(LowPowerMode_Ctr >= 21)
 	{
 		/*STOP PIT*/
 		PIT_StopTimer(PIT, kPIT_Chnl_0);
@@ -133,18 +135,7 @@ void PwrMode_to_VLPR(void)
  * Core clock: 4MHz
  * Bus clock: 8MHz
  */
-	const sim_clock_config_t simConfig = {
-			.pllFllSel = 0U,        /* PLLFLLSEL select FLL. */
-			.er32kSrc = 3U,         /* ERCLK32K selection, use LPO. */
-			.clkdiv1 = 0xB0040000U, /* SIM_CLKDIV1. */
-	};
-
-
-	CLOCK_BootToBlpiMode(0U, kMCG_IrcFast, kMCG_IrclkEnable);
-
-	CLOCK_SetSimConfig(&simConfig);
-
-	//SystemCoreClock = 4000000U;
+	pm_SetClockVlpr();
 
 }
 
