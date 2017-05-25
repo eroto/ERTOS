@@ -5,6 +5,7 @@
  *      Author: Enrique
  */
 #include "io.h"
+#include "LCD1602A.h"
 
 /*Global Variables*/
 /*----------------------------------------------------------------------------------------------*/
@@ -21,25 +22,58 @@ clock_ip_name_t io_Get_PortClk(IO_PORT PORT);
 /*----------------------------------------------------------------------------------------------*/
 
 /*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void io_init(void)
 {
-    io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput);
-    io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput);
-    //io_Pin_Cfg(PORT_C, 3, kGPIO_DigitalOutput);
+
+
+    /*Reset*/
+    io_Pin_Cfg(PORT_B, 8, kGPIO_DigitalInput, kPORT_PullDown);
+
+    /*Pin Cfg Blue LED*/
+    io_Pin_Cfg(PORT_D, 1, kGPIO_DigitalOutput, kPORT_PullUp);
+
+    /*Pin Cfg for LCD 1602*/
+#ifdef LCD_8_DATA_LINES
+    io_Pin_Cfg(PORT_B, 0, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D0*/
+	io_Pin_Cfg(PORT_B, 1, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D1*/
+	io_Pin_Cfg(PORT_B, 2, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D2*/
+	io_Pin_Cfg(PORT_B, 3, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D3*/
+#endif
+
+	io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput, kPORT_PullUp); /*LCD 1602 E*/
+
+	io_Pin_Cfg(PORT_C, 4, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D4*/
+    io_Pin_Cfg(PORT_C, 5, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D5*/
+    io_Pin_Cfg(PORT_C, 6, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D6*/
+    io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D7*/
+
+    io_Pin_Cfg(PORT_A, 1, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD RS*/
+    io_Pin_Cfg(PORT_A, 2, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD R/W*/
+
+    GPIO_ClearPinsOutput(GPIOB, 0x0Fu);
+    GPIO_ClearPinsOutput(GPIOC, 0xF1u);
+    GPIO_WritePinOutput(GPIOA, 1, 0); /*LCD RS to 0*/
+    GPIO_WritePinOutput(GPIOA, 2, 0); /*LCD RW to 0*/
+    //GPIO_WritePinOutput(GPIOC, 0, 0);
 }
 
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 clock_ip_name_t io_Get_PortClk(IO_PORT PORT)
 {
     clock_ip_name_t result = kCLOCK_IpInvalid;
@@ -52,15 +86,28 @@ clock_ip_name_t io_Get_PortClk(IO_PORT PORT)
     return result;
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void io_Pin_Init(void)
+{
 
+}
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
-int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR, uint16_t PullSelect)
 {
 
     int8_t result = 0;
@@ -77,13 +124,16 @@ int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
 	else
 	{
         // Define a digital input pin PCR configuration
-        PORT_Struct.pullSelect = kPORT_PullUp;
+        PORT_Struct.pullSelect = PullSelect;
         PORT_Struct.mux = kPORT_MuxAsGpio;
         PORT_Struct.passiveFilterEnable = kPORT_PassiveFilterDisable;
         PORT_Struct.driveStrength = kPORT_LowDriveStrength;
         PORT_Struct.slewRate = kPORT_SlowSlewRate;
 
         CLOCK_EnableClock(port_clk);
+
+        PORT_SetPinMux(a_PORT[IO_PORT], PIN, kPORT_MuxAsGpio);
+
         PORT_SetPinConfig(a_PORT[IO_PORT], PIN, &PORT_Struct);
 
         GPIO_Struct.pinDirection = DIR;
@@ -94,12 +144,14 @@ int8_t io_Pin_Cfg(IO_PORT IO_PORT, uint8_t PIN, gpio_pin_direction_t DIR)
 	return result;
 }
 
-/*-----------------------------------*/
-/* Function:                         */
-/* input:                            */
-/* return:                           */
-/* Note:                             */
-/*-----------------------------------*/
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 int8_t io_Read_Pin_Cfg(IO_PORT PORT, uint8_t PIN)
 {
     uint8_t PinDir = 0;
@@ -115,6 +167,8 @@ int8_t io_Read_Pin_Cfg(IO_PORT PORT, uint8_t PIN)
 
     return PinDir;
 }
+
+
 
 
 

@@ -18,7 +18,7 @@
 /******************************************************************************
 *   Global Variable Definitions
 ******************************************************************************/
-T_OpModeType  ruw_curOpMode;
+T_OpModeType  ruw_curOpMode = 0x00;
 
 extern volatile SCHM_BOOLEAN re_mngExecflag;
 
@@ -36,34 +36,21 @@ const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
 	/* NOTE: this list shall be updated according to E_MODULES_ID_TYPE! */
 };
 
-/***************************************************************************
- * Function:    schInit
- *
- * Description: Main function of Scheduler module
- *
- * Returns:
- *
- * Notes:
- *
- **************************************************************************/ 
+
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Schr_Init( void )
 {
 
     /* clear timer interrupt flag */
     re_mngExecflag = SCHM_FALSE;
-
-    /*Timers stopped un Debug mode*/
-    pit_config_t Sch_Pit_cfg;
-
-    Sch_Pit_cfg.enableRunInDebug = FALSE;
-
-    PIT_Init(PIT, (pit_config_t *) &Sch_Pit_cfg);
-
-    PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, MSEC_TO_COUNT(5,PIT_CLK_SRC_HZ));
-
-    PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
-
-    EnableIRQ(PIT_IRQn);
 
     PIT_StartTimer(PIT, kPIT_Chnl_0);
 
@@ -71,16 +58,15 @@ void Schr_Init( void )
 
 }
 
-/***************************************************************************
- * Function:    schExec
- *
- * Description: Main function of Scheduler module
- *
- * Returns:
- *
- * Notes:
- *
- **************************************************************************/ 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void Schr_Exec( void )
 {
     E_MODULES_ID_TYPE le_mngIndex;
@@ -132,7 +118,14 @@ void Schr_Exec( void )
 }
 
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void PIT_IRQHandler(void)
 {
     /* Set flag so background will run */
@@ -141,3 +134,4 @@ void PIT_IRQHandler(void)
     PIT_ClearStatusFlags(PIT, 0, kPIT_TimerFlag);
 
 }
+

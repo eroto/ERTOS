@@ -33,9 +33,12 @@ source \
 drivers \
 board \
 apptasks \
+Timers \
 SerialCom \
 Schr \
+Relay \
 RTC \
+LCD1602A \
 InitApp \
 IO \
 

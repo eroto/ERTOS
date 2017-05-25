@@ -8,17 +8,37 @@
 #ifndef SERIALCOM_UART_H_
 #define SERIALCOM_UART_H_
 
+#define UART_INIT_PATTER	((uint8_t)0xCCu)
+
 #include <stdint.h>
 #include "fsl_port.h"
 #include "fsl_uart.h"
 #include "mytypedef.h"
 
 
-uint8_t sendData[15];
+#define UART_BUFFER_MAX_SIZE	(uint8_t)50u
 
+#define UART_INIT_PATTERN 		(uint8_t)0xccu
+
+typedef enum
+{
+	UART_IDLE,
+	UART_TX,
+	UART_RX,
+	UART_INIT_ERROR,
+	UART_TXRX_ERROR,
+	UART_MAX_STATES
+}T_UART_STATES;
+
+uint8_t PublicSendData[UART_BUFFER_MAX_SIZE];
+
+
+void uart_main(void);
 void uart_init(void);
-void uart_Callback(uart_handle_t *handle, status_t status, void *userData);
-status_t uart_Send(uint8_t *lpub_data, const uint8_t lub_size);
+status_t uart_ReqTx(uint8_t* lpub_data,  uint8_t lub_size);
+void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void *userData);
+
+
 
 
 #endif /* SERIALCOM_UART_H_ */

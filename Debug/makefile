@@ -14,9 +14,12 @@ RM := rm -rf
 -include drivers/subdir.mk
 -include board/subdir.mk
 -include apptasks/subdir.mk
+-include Timers/subdir.mk
 -include SerialCom/subdir.mk
 -include Schr/subdir.mk
+-include Relay/subdir.mk
 -include RTC/subdir.mk
+-include LCD1602A/subdir.mk
 -include InitApp/subdir.mk
 -include IO/subdir.mk
 -include subdir.mk

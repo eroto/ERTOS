@@ -13,6 +13,10 @@
 #include "fsl_gpio.h"
 #include "fsl_port.h"
 
+
+
+#define io_Read_Pin(a_PORT, a_PIN)	GPIO_ReadPinInput(a_PORT, a_PIN)
+
 /* enums and typedef*/
 /*----------------------------------------------------------------------------------------------*/
 typedef enum
@@ -28,9 +32,8 @@ typedef enum
 /* Functions prototypes*/
 /*----------------------------------------------------------------------------------------------*/
 void io_init(void);
-int8_t io_Pin_Cfg(IO_PORT PORT, uint8_t PIN, gpio_pin_direction_t DIR);
+int8_t io_Pin_Cfg(IO_PORT PORT, uint8_t PIN, gpio_pin_direction_t DIR, uint16_t PullSelect);
 int8_t io_Read_Pin_Cfg(IO_PORT PORT, uint8_t PIN);
-
 
 
 

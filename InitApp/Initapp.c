@@ -7,12 +7,14 @@
 
 #include <stdint.h>
 #include "mytypedef.h"
+#include "timers.h"
 #include "Initapp.h"
 #include "Schr.h"
 #include "io.h"
 #include "fsl_cop.h"
 #include "uart.h"
 #include "rtc.h"
+#include "LCD1602A.h"
 
 
 
@@ -37,20 +39,36 @@ void Initapp2(void);
 *************************/
 
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void InitApp1(void)
 {
-
 	COP_Disable(SIM);
+	timers_init();
 	io_init();
 	uart_init();
 	rtc_init();
-
 }
 
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void InitApp2(void)
 {
-
+	Disp_Init();
+	relayctrl_init();
 	Schr_Init();
 
 }

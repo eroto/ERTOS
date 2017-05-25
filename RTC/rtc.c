@@ -10,6 +10,7 @@
 #include "fsl_common.h"
 #include "fsl_clock.h"
 #include "fsl_gpio.h"
+#include "uart.h"
 #include "rtc.h"
 
 uint32_t sec;
@@ -22,6 +23,15 @@ rtc_datetime_t RTC_Alarm;
 
 volatile uint8_t alarm_ringing = 0;
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_init(void)
 {
 
@@ -45,9 +55,9 @@ void rtc_init(void)
 	RTC_Init(RTC, &rtcConfig);
 	//RTC_StopTimer(RTC);
 
-	date.year = 2016;
-	date.month = 11;
-	date.day = 20;
+	date.year = 2017;
+	date.month = 1;
+	date.day = 2;
 	date.hour = 13;
 	date.minute = 50;
 	date.second = 00;
@@ -62,7 +72,7 @@ void rtc_init(void)
 	rtc_SetDatetime(&date);
 
 	rtc_SetAlarm(&RTC_Alarm);
-	GPIO_WritePinOutput(GPIOC,7,0);
+	//GPIO_WritePinOutput(GPIOC,7,0);
 	rtc_Start();
 	EnableIRQ(RTC_IRQn);
 	//EnableIRQ(RTC_Seconds_IRQn);
@@ -70,16 +80,40 @@ void rtc_init(void)
 	//RTC_EnableInterrupts(RTC, kRTC_SecondsInterruptEnable);
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_Start(void)
 {
 	RTC_StartTimer(RTC);
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_Stop(void)
 {
 	RTC_StopTimer(RTC);
 }
 
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_SetDatetime(rtc_datetime_t *Datetime )
 {
 	rtc_Stop();
@@ -87,7 +121,28 @@ void rtc_SetDatetime(rtc_datetime_t *Datetime )
 
 }
 
-void rtc_GetDatetime(rtc_datetime_t *Datetime )
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void rtc_GetTime()
+{
+
+}
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void rtc_GetDatetime(rtc_datetime_t *Datetime)
 {
 	if(Datetime != NULL)
 	{
@@ -95,6 +150,15 @@ void rtc_GetDatetime(rtc_datetime_t *Datetime )
 	}
 }
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 uint8_t rtc_SetAlarm(rtc_datetime_t * Datetime )
 {
 	uint8_t loc_status = 0;
@@ -111,7 +175,14 @@ uint8_t rtc_SetAlarm(rtc_datetime_t * Datetime )
 	return loc_status;
 }
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void rtc_GetAlarm(rtc_datetime_t * Datetime )
 {
 	if (Datetime != NULL)
@@ -120,23 +191,58 @@ void rtc_GetAlarm(rtc_datetime_t * Datetime )
 	}
 }
 
-
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void RTC_IRQHandler(void)
 {
-	GPIO_WritePinOutput(GPIOC,7,1);
+	//GPIO_WritePinOutput(GPIOC,7,1);
 	alarm_ringing = 1;
 	rtc_Stop();
 	RTC_ClearStatusFlags(RTC, kRTC_AlarmInterruptEnable);
 	rtc_Start();
 }
 
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
 void RTC_Seconds_IRQHandler(void)
 {
-	GPIO_WritePinOutput(GPIOC,7,1);
+	//GPIO_WritePinOutput(GPIOC,7,1);
 	alarm_ringing = 1;
 	rtc_Stop();
 	RTC_ClearStatusFlags(RTC, kRTC_SecondsInterruptEnable);
 	rtc_Start();
+}
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void RTC_SendClock(void)
+{
+    rtc_GetDatetime(&Temp_date);
+
+    PublicSendData[0] = Temp_date.hour;
+    PublicSendData[1] = Temp_date.minute;
+    PublicSendData[2] = Temp_date.second;
+
+    uart_ReqTx(PublicSendData, 3);
 }
 
 
