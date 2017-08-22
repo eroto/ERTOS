@@ -47,3 +47,10 @@ C:\Users\Enrique\Documents\GitHub\ERTOS\Debug\apptasks\*.*
 Debug/makefile
 Debug/sources.mk
 /Debug/
+/Release/
+
+*.launch
+*.prefs
+*.settings.xml
+.settings/language.settings.xml
+*.cproject
