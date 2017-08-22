@@ -28,8 +28,9 @@ const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
 	{apptask_5ms,				1,                  1,					HIGH_POWER},
 	{apptask_20ms,				4,					4,					HIGH_POWER},
 	{apptask_100ms,				20,					20,					HIGH_POWER},
+	{apptask_500ms,				100,				100,				HIGH_POWER},
 	{apptask_1s,				200,				200,				HIGH_POWER},
-	{LP_apptask_1s,				10,				10,				 LOW_POWER},
+	{LP_apptask_1s,				10,					10,					 LOW_POWER},
   //{function_task_name,		0,					1,					HIGH_POWER},
 
 

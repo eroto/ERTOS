@@ -64,6 +64,7 @@ typedef enum {
     TASK_5MS,
     TASK_20MS,
     TASK_100MS,
+	TASK_500MS,
     TASK_1S,
 	TASK_1S_LP,
     SCHD_MANAGERS_NUMBER/* Number of Managers/Applications */

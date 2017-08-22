@@ -9,11 +9,37 @@
 #include "fsl_smc.h"
 #include"pm.h"
 
+
+/**************************************/
+/*       Function prototypes          */
+/**************************************/
 void pm_SetClockVlpr_2_Run(void);
 void pm_SetClockVlpr(void);
 
+
 /* Power mode switch callback.*/
 //status_t callback0(notifier_notification_block_t *notify, void *dataPtr);
+
+
+/*-------------------------------------
+ * Function: func_name
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void PwrMode_to_H2L(void)
+{
+
+/*
+ * Core clock: 4MHz
+ * Bus clock: 8MHz
+ */
+	pm_SetClockVlpr();
+
+}
+
 
 
 /*-------------------------------------

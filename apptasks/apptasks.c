@@ -28,7 +28,7 @@ uint8_t LowPowerMode_Ctr = 0;
 #define PTB_Dx_clear	0x0Fu
 #define PTC_Dx_clear	0xF0u
 
-void PwrMode_to_VLPR(void);
+
 
 /*-------------------------------------
  * Function: func_name
@@ -42,6 +42,13 @@ void apptask_5ms(void)
 {
     //GPIO_TogglePinsOutput(GPIOC, 1<<7);
 	uart_main();
+
+	//io_Debounce_Pin_DI(PORT_B, 2);
+
+	io_Debounce_Pin_DI_Low(r_Deb_Array);
+	//io_Debounce_Pin_DI_Low(r_Deb_Array[1]);
+	//io_Debounce_Pin_DI_Low(r_Deb_Array[2]);
+
 }
 
 
@@ -57,7 +64,7 @@ void apptask_5ms(void)
 void apptask_20ms()
 {
 
-
+		Disp_Init();
 
 }
 
@@ -72,7 +79,7 @@ void apptask_20ms()
 void apptask_100ms(void)
 {
 	//GPIO_TogglePinsOutput(GPIOC, 1<<3);
-	RTC_SendClock();
+	//RTC_SendClock();
 
 
 	//PublicSendData[0] = '-';
@@ -80,6 +87,23 @@ void apptask_100ms(void)
 	//PublicSendData[1] = io_Read_Pin(GPIOB,8);
 
 	//uart_ReqTx(PublicSendData, 2);
+
+	//Disp_Main();
+}
+
+
+/*-------------------------------------
+ * Function: apptask_500ms
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void apptask_500ms(void)
+{
+
+	RTC_SendClock();
 
 	Disp_Main();
 }
@@ -94,24 +118,22 @@ void apptask_100ms(void)
  *-----------------------------------*/
 void apptask_1s(void)
 {
-
-
-
 	//GPIO_WritePinOutput(GPIOA, 1, 0); /*Enable RS*/
-//	GPIO_TogglePinsOutput(GPIOB,1);
+	GPIO_TogglePinsOutput(GPIOB,1);
 
 	relayctrl_main();
 
 	LowPowerMode_Ctr++;
 
-	if(LowPowerMode_Ctr >= 21)
+	//if(LowPowerMode_Ctr >= 21)
+	if(0)
 	{
 		/*STOP PIT*/
 		PIT_StopTimer(PIT, kPIT_Chnl_0);
 
 		/*Limit  BusClock to 800 KHz*/
 		/*Limit  CoreClock to 4 MHz*/
-		PwrMode_to_VLPR();
+		PwrMode_to_H2L();
 
 		/*Reconfigure PIT to use 800 KHz freq.*/
 		PIT_INIT_LP();
@@ -128,16 +150,6 @@ void apptask_1s(void)
 
 }
 
-void PwrMode_to_VLPR(void)
-{
-
-/*
- * Core clock: 4MHz
- * Bus clock: 8MHz
- */
-	pm_SetClockVlpr();
-
-}
 
 /*-------------------------------------
  * Function: LP_apptask_1s

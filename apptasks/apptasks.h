@@ -12,6 +12,7 @@
 extern void apptask_5ms(void);
 extern void apptask_20ms(void);
 extern void apptask_100ms(void);
+extern void apptask_500ms(void);
 extern void apptask_1s(void);
 extern void LP_apptask_1s(void);
 extern void apptask_idle(void);

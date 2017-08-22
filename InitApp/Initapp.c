@@ -35,8 +35,6 @@ void InitApp1(void);
 void InitApp2(void);
 
 
-
-
 /*************************
 *  Function Definition   *
 *************************/
@@ -57,7 +55,6 @@ void InitApp1(void)
 	timers_init();
 	uart_init();
 	rtc_init();
-
 	SMC_SetPowerModeProtection(SMC,kSMC_AllowPowerModeVlp);
 
 }
@@ -73,8 +70,8 @@ void InitApp1(void)
  *-----------------------------------*/
 void InitApp2(void)
 {
-	Disp_Init();
 	relayctrl_init();
+	LCD1602A_Init();
 	Schr_Init();
 
 }

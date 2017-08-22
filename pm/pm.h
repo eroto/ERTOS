@@ -57,11 +57,13 @@ typedef enum _app_wakeup_source
 
 
 /**************************************/
-/*         Function prototypes        */
+/*  Exported Function prototypes      */
 /**************************************/
-extern void pm_SetClockRun_2_Vlpr(void);
+//extern void pm_SetClockRun_2_Vlpr(void);
 
-extern void pm_SetClockVlpr(void);
+//extern void pm_SetClockVlpr(void);
+
+void PwrMode_to_H2L(void);
 
 
 
