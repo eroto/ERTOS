@@ -5,8 +5,8 @@
  *      Author: uid87057
  */
 
-#ifndef SCHR_H_
-#define SCHR_H_
+#ifndef SCHR_H
+#define SCHR_H
 
 #include <stdint.h>
 #include "schm_trm_isr.h"
@@ -23,12 +23,17 @@ typedef uint16_t T_TaskDelayType;
 /* delay manager type */
 typedef uint16_t T_DelayMainType;
 
-
 typedef enum
 {
-    SCHM_FALSE = 0,
-    SCHM_TRUE  = 1
-}SCHM_BOOLEAN;
+	HIGH_POWER = 0,
+	LOW_POWER,
+	NUM_OF_POWER_MODES
+}T_TaskPowerModeType;
+
+
+
+
+extern T_TaskPowerModeType  re_curOpMode;
 
 /******************************************************************************
 *   Macro Definitions
@@ -59,7 +64,9 @@ typedef enum {
     TASK_5MS,
     TASK_20MS,
     TASK_100MS,
+	TASK_500MS,
     TASK_1S,
+	TASK_1S_LP,
     SCHD_MANAGERS_NUMBER/* Number of Managers/Applications */
 } E_MODULES_ID_TYPE;
 
@@ -71,17 +78,21 @@ typedef enum {
 typedef void (*T_SCHM_MANAGER_API_TYPE)(void);
 
 /*Type definition for main functions of the managers and their execution period*/
-typedef struct{
+typedef struct
+{
     /* the main function */
-    T_SCHM_MANAGER_API_TYPE  ManagerAPI;
+    T_SCHM_MANAGER_API_TYPE  JobFunction;
+
     /* delay of submodule execution from Scheduler start in ms */
     const T_TaskDelayType StartUpDelay;
+
     /* module is executed each 'ExecutionPeriod' time in ms */
     const T_TaskDelayType ExecutionPeriod;
 
-    T_OpModeType UsedInMode;
+    /*Allowed Power mode*/
+    const T_TaskPowerModeType JobPowerMode;
 
-} S_SCHM_MANAGER_EXEC_TYPE;
+}S_SCHM_MANAGER_EXEC_TYPE;
 
 /******************************************************************************
 *   External Variables

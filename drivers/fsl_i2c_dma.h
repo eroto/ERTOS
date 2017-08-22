@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * All rights reserved.
+ * Copyright 2016-2017 NXP
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -12,7 +12,7 @@
  *   list of conditions and the following disclaimer in the documentation and/or
  *   other materials provided with the distribution.
  *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+ * o Neither the name of the copyright holder nor the names of its
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
@@ -44,24 +44,24 @@
  * Definitions
  ******************************************************************************/
 
-/*! @brief I2C master dma handle typedef. */
+/*! @brief I2C master DMA handle typedef. */
 typedef struct _i2c_master_dma_handle i2c_master_dma_handle_t;
 
-/*! @brief I2C master dma transfer callback typedef. */
+/*! @brief I2C master DMA transfer callback typedef. */
 typedef void (*i2c_master_dma_transfer_callback_t)(I2C_Type *base,
                                                    i2c_master_dma_handle_t *handle,
                                                    status_t status,
                                                    void *userData);
 
-/*! @brief I2C master dma transfer structure. */
+/*! @brief I2C master DMA transfer structure. */
 struct _i2c_master_dma_handle
 {
     i2c_master_transfer_t transfer;                        /*!< I2C master transfer struct. */
     size_t transferSize;                                   /*!< Total bytes to be transferred. */
     uint8_t state;                                         /*!< I2C master transfer status. */
     dma_handle_t *dmaHandle;                               /*!< The DMA handler used. */
-    i2c_master_dma_transfer_callback_t completionCallback; /*!< Callback function called after dma transfer finished. */
-    void *userData;                                        /*!< Callback parameter passed to callback function. */
+    i2c_master_dma_transfer_callback_t completionCallback; /*!< A callback function called after the DMA transfer finished. */
+    void *userData;                                        /*!< A callback parameter passed to the callback function. */
 };
 
 /*******************************************************************************
@@ -78,12 +78,12 @@ extern "C" {
  */
 
 /*!
- * @brief Init the I2C handle which is used in transcational functions
+ * @brief Initializes the I2C handle which is used in transcational functions.
  *
  * @param base I2C peripheral base address
- * @param handle pointer to i2c_master_dma_handle_t structure
- * @param callback pointer to user callback function
- * @param userData user param passed to the callback function
+ * @param handle Pointer to the i2c_master_dma_handle_t structure
+ * @param callback Pointer to the user callback function
+ * @param userData A user parameter passed to the callback function
  * @param dmaHandle DMA handle pointer
  */
 void I2C_MasterTransferCreateHandleDMA(I2C_Type *base,
@@ -93,33 +93,33 @@ void I2C_MasterTransferCreateHandleDMA(I2C_Type *base,
                                        dma_handle_t *dmaHandle);
 
 /*!
- * @brief Performs a master dma non-blocking transfer on the I2C bus
+ * @brief Performs a master DMA non-blocking transfer on the I2C bus.
  *
  * @param base I2C peripheral base address
- * @param handle pointer to i2c_master_dma_handle_t structure
- * @param xfer pointer to transfer structure of i2c_master_transfer_t
- * @retval kStatus_Success Sucessully complete the data transmission.
- * @retval kStatus_I2C_Busy Previous transmission still not finished.
- * @retval kStatus_I2C_Timeout Transfer error, wait signal timeout.
- * @retval kStatus_I2C_ArbitrationLost Transfer error, arbitration lost.
- * @retval kStataus_I2C_Nak Transfer error, receive Nak during transfer.
+ * @param handle A pointer to the i2c_master_dma_handle_t structure
+ * @param xfer A pointer to the transfer structure of the i2c_master_transfer_t
+ * @retval kStatus_Success Sucessfully completes the data transmission.
+ * @retval kStatus_I2C_Busy A previous transmission is still not finished.
+ * @retval kStatus_I2C_Timeout A transfer error, waits for the signal timeout.
+ * @retval kStatus_I2C_ArbitrationLost A transfer error, arbitration lost.
+ * @retval kStataus_I2C_Nak A transfer error, receives NAK during transfer.
  */
 status_t I2C_MasterTransferDMA(I2C_Type *base, i2c_master_dma_handle_t *handle, i2c_master_transfer_t *xfer);
 
 /*!
- * @brief Get master transfer status during a dma non-blocking transfer
+ * @brief Gets a master transfer status during a DMA non-blocking transfer.
  *
  * @param base I2C peripheral base address
- * @param handle pointer to i2c_master_dma_handle_t structure
- * @param count Number of bytes transferred so far by the non-blocking transaction.
+ * @param handle A pointer to the i2c_master_dma_handle_t structure
+ * @param count A number of bytes transferred so far by the non-blocking transaction.
  */
 status_t I2C_MasterTransferGetCountDMA(I2C_Type *base, i2c_master_dma_handle_t *handle, size_t *count);
 
 /*!
- * @brief Abort a master dma non-blocking transfer in a early time
+ * @brief Aborts a master DMA non-blocking transfer early.
  *
  * @param base I2C peripheral base address
- * @param handle pointer to i2c_master_dma_handle_t structure
+ * @param handle A pointer to the i2c_master_dma_handle_t structure.
  */
 void I2C_MasterTransferAbortDMA(I2C_Type *base, i2c_master_dma_handle_t *handle);
 

@@ -41,7 +41,9 @@ void rtc_init(void)
 
 	PORT_SetPinMux(PORTC, 3u, kPORT_MuxAlt5);
 
-	SIM->SOPT1 = SIM_SOPT1_OSC32KSEL(2);
+	SIM->SOPT1 = SIM_SOPT1_OSC32KSEL(2); /*RTC_CLKIN*/
+
+
 
 	/*Selects either the RTC 1 Hz clock or the OSC clock to be output on the RTC_CLKOUT pin.
 	0 RTC 1 Hz clock is output on the RTC_CLKOUT pin.
@@ -53,7 +55,7 @@ void rtc_init(void)
 	RTC_GetDefaultConfig(&rtcConfig);
 
 	RTC_Init(RTC, &rtcConfig);
-	//RTC_StopTimer(RTC);
+	RTC_StopTimer(RTC);
 
 	date.year = 2017;
 	date.month = 1;

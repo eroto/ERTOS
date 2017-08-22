@@ -30,15 +30,13 @@ typedef enum
 	UART_MAX_STATES
 }T_UART_STATES;
 
-uint8_t PublicSendData[UART_BUFFER_MAX_SIZE];
+extern uint8_t PublicSendData[UART_BUFFER_MAX_SIZE];
 
 
 void uart_main(void);
 void uart_init(void);
 status_t uart_ReqTx(uint8_t* lpub_data,  uint8_t lub_size);
 void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void *userData);
-
-
 
 
 #endif /* SERIALCOM_UART_H_ */

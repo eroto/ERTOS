@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * All rights reserved.
+ * Copyright 2016-2017 NXP
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -12,7 +12,7 @@
  *   list of conditions and the following disclaimer in the documentation and/or
  *   other materials provided with the distribution.
  *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+ * o Neither the name of the copyright holder nor the names of its
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
@@ -89,11 +89,11 @@ extern "C" {
  * @brief Initializes the UART handle which is used in transactional functions and sets the callback.
  *
  * @param base UART peripheral base address.
- * @param handle Pointer to uart_dma_handle_t structure.
+ * @param handle Pointer to the uart_dma_handle_t structure.
  * @param callback UART callback, NULL means no callback.
  * @param userData User callback function data.
- * @param rxDmaHandle User requested DMA handle for RX DMA transfer.
- * @param txDmaHandle User requested DMA handle for TX DMA transfer.
+ * @param rxDmaHandle User requested DMA handle for the RX DMA transfer.
+ * @param txDmaHandle User requested DMA handle for the TX DMA transfer.
  */
 void UART_TransferCreateHandleDMA(UART_Type *base,
                           uart_dma_handle_t *handle,
@@ -111,8 +111,8 @@ void UART_TransferCreateHandleDMA(UART_Type *base,
  * @param base UART peripheral base address.
  * @param handle UART handle pointer.
  * @param xfer UART DMA transfer structure. See #uart_transfer_t.
- * @retval kStatus_Success if succeed, others failed.
- * @retval kStatus_UART_TxBusy Previous transfer on going.
+ * @retval kStatus_Success if succeeded; otherwise failed.
+ * @retval kStatus_UART_TxBusy Previous transfer ongoing.
  * @retval kStatus_InvalidArgument Invalid argument.
  */
 status_t UART_TransferSendDMA(UART_Type *base, uart_dma_handle_t *handle, uart_transfer_t *xfer);
@@ -124,9 +124,9 @@ status_t UART_TransferSendDMA(UART_Type *base, uart_dma_handle_t *handle, uart_t
  * right away. When all data is received, the receive callback function is called.
  *
  * @param base UART peripheral base address.
- * @param handle Pointer to uart_dma_handle_t structure.
+ * @param handle Pointer to the uart_dma_handle_t structure.
  * @param xfer UART DMA transfer structure. See #uart_transfer_t.
- * @retval kStatus_Success if succeed, others failed.
+ * @retval kStatus_Success if succeeded; otherwise failed.
  * @retval kStatus_UART_RxBusy Previous transfer on going.
  * @retval kStatus_InvalidArgument Invalid argument.
  */
@@ -153,9 +153,9 @@ void UART_TransferAbortSendDMA(UART_Type *base, uart_dma_handle_t *handle);
 void UART_TransferAbortReceiveDMA(UART_Type *base, uart_dma_handle_t *handle);
 
 /*!
- * @brief Get the number of bytes that have been written to UART TX register.
+ * @brief Gets the number of bytes written to UART TX register.
  *
- * This function gets the number of bytes that have been written to UART TX
+ * This function gets the number of bytes written to UART TX
  * register by DMA.
  *
  * @param base UART peripheral base address.
@@ -168,7 +168,7 @@ void UART_TransferAbortReceiveDMA(UART_Type *base, uart_dma_handle_t *handle);
 status_t UART_TransferGetSendCountDMA(UART_Type *base, uart_dma_handle_t *handle, uint32_t *count);
 
 /*!
- * @brief Get the number of bytes that have been received.
+ * @brief Gets the number of bytes that have been received.
  *
  * This function gets the number of bytes that have been received.
  *

@@ -8,6 +8,7 @@
 #ifndef TIMERS_H_
 #define TIMERS_H_
 
-void timers_init(void);
+extern void timers_init(void);
+extern void PIT_INIT_LP(void);
 
 #endif /* TIMERS_H_ */

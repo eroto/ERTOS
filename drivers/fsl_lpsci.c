@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * All rights reserved.
+ * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
+ * Copyright 2016-2017 NXP
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -12,7 +12,7 @@
  *   list of conditions and the following disclaimer in the documentation and/or
  *   other materials provided with the distribution.
  *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+ * o Neither the name of the copyright holder nor the names of its
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
@@ -37,10 +37,12 @@
 /* LPSCI transfer state. */
 enum _lpsci_tansfer_state
 {
-    kLPSCI_TxIdle, /*!< TX idle. */
-    kLPSCI_TxBusy, /*!< TX busy. */
-    kLPSCI_RxIdle, /*!< RX idle. */
-    kLPSCI_RxBusy  /*!< RX busy. */
+    kLPSCI_TxIdle,         /*!< TX idle. */
+    kLPSCI_TxBusy,         /*!< TX busy. */
+    kLPSCI_RxIdle,         /*!< RX idle. */
+    kLPSCI_RxBusy,         /*!< RX busy. */
+    kLPSCI_RxFramingError, /* Rx framing error */
+    kLPSCI_RxParityError   /* Rx parity error */
 };
 
 /* Typedef for interrupt handler. */
@@ -114,8 +116,10 @@ static UART0_Type *const s_lpsciBases[] = UART0_BASE_PTRS;
 
 /* Array of LPSCI IRQ number. */
 static const IRQn_Type s_lpsciIRQ[] = UART0_RX_TX_IRQS;
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 /* Array of LPSCI clock name. */
 static const clock_ip_name_t s_lpsciClock[] = UART0_CLOCKS;
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 /* LPSCI ISR for transactional APIs. */
 static lpsci_isr_t s_lpsciIsr;
@@ -129,7 +133,7 @@ uint32_t LPSCI_GetInstance(UART0_Type *base)
     uint32_t instance;
 
     /* Find the instance index from base address mappings. */
-    for (instance = 0; instance < FSL_FEATURE_SOC_LPSCI_COUNT; instance++)
+    for (instance = 0; instance < ARRAY_SIZE(s_lpsciBases); instance++)
     {
         if (s_lpsciBases[instance] == base)
         {
@@ -137,7 +141,7 @@ uint32_t LPSCI_GetInstance(UART0_Type *base)
         }
     }
 
-    assert(instance < FSL_FEATURE_SOC_LPSCI_COUNT);
+    assert(instance < ARRAY_SIZE(s_lpsciBases));
 
     return instance;
 }
@@ -262,8 +266,10 @@ status_t LPSCI_Init(UART0_Type *base, const lpsci_config_t *config, uint32_t src
         return kStatus_LPSCI_BaudrateNotSupport;
     }
 
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Enable LPSCI clock */
     CLOCK_EnableClock(s_lpsciClock[LPSCI_GetInstance(base)]);
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
     /* Disable TX RX before setting. */
     base->C2 &= ~(UART0_C2_TE_MASK | UART0_C2_RE_MASK);
@@ -324,8 +330,10 @@ void LPSCI_Deinit(UART0_Type *base)
     {
     }
 
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
     /* Disable LPSCI clock */
     CLOCK_DisableClock(s_lpsciClock[LPSCI_GetInstance(base)]);
+#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 }
 
 void LPSCI_GetDefaultConfig(lpsci_config_t *config)
@@ -609,7 +617,13 @@ void LPSCI_TransferStartRingBuffer(UART0_Type *base, lpsci_handle_t *handle, uin
     handle->rxRingBufferTail = 0U;
 
     /* Enable the interrupt to accept the data when user need the ring buffer. */
-    LPSCI_EnableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable);
+    LPSCI_EnableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable |
+                                     kLPSCI_FramingErrorInterruptEnable);
+    /* Enable parity error interrupt when parity mode is enable*/
+    if (UART0_C1_PE_MASK & base->C1)
+    {
+        LPSCI_EnableInterrupts(base, kLPSCI_ParityErrorInterruptEnable);
+    }
 }
 
 void LPSCI_TransferStopRingBuffer(UART0_Type *base, lpsci_handle_t *handle)
@@ -618,7 +632,14 @@ void LPSCI_TransferStopRingBuffer(UART0_Type *base, lpsci_handle_t *handle)
 
     if (handle->rxState == kLPSCI_RxIdle)
     {
-        LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable);
+        LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable |
+                                          kLPSCI_FramingErrorInterruptEnable);
+
+        /* Disable parity error interrupt when parity mode is enable*/
+        if (UART0_C1_PE_MASK & base->C1)
+        {
+            LPSCI_DisableInterrupts(base, kLPSCI_ParityErrorInterruptEnable);
+        }
     }
 
     handle->rxRingBuffer = NULL;
@@ -700,7 +721,6 @@ status_t LPSCI_TransferReceiveNonBlocking(UART0_Type *base,
     size_t bytesToReceive;
     /* How many bytes currently have received. */
     size_t bytesCurrentReceived;
-    uint32_t regPrimask = 0U;
 
     /* How to get data:
        1. If RX ring buffer is not enabled, then save xfer->data and xfer->dataSize
@@ -724,8 +744,8 @@ status_t LPSCI_TransferReceiveNonBlocking(UART0_Type *base,
         /* If RX ring buffer is used. */
         if (handle->rxRingBuffer)
         {
-            /* Disable IRQ, protect ring buffer. */
-            regPrimask = DisableGlobalIRQ();
+            /* Disable LPSCI RX IRQ, protect ring buffer. */
+            LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable);
 
             /* How many bytes in RX ring buffer currently. */
             bytesToCopy = LPSCI_TransferGetRxRingBufferLength(handle);
@@ -763,8 +783,8 @@ status_t LPSCI_TransferReceiveNonBlocking(UART0_Type *base,
                 handle->rxState = kLPSCI_RxBusy;
             }
 
-            /* Enable IRQ if previously enabled. */
-            EnableGlobalIRQ(regPrimask);
+            /* Enable LPSCI RX IRQ if previously enabled. */
+            LPSCI_EnableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable);
 
             /* Call user callback since all data are received. */
             if (0 == bytesToReceive)
@@ -784,7 +804,13 @@ status_t LPSCI_TransferReceiveNonBlocking(UART0_Type *base,
             handle->rxState = kLPSCI_RxBusy;
 
             /* Enable RX interrupt. */
-            LPSCI_EnableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable);
+            LPSCI_EnableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable |
+                                             kLPSCI_FramingErrorInterruptEnable);
+            /* Enable parity error interrupt when parity mode is enable*/
+            if (UART0_C1_PE_MASK & base->C1)
+            {
+                LPSCI_EnableInterrupts(base, kLPSCI_ParityErrorInterruptEnable);
+            }
         }
 
         /* Return the how many bytes have read. */
@@ -807,7 +833,13 @@ void LPSCI_TransferAbortReceive(UART0_Type *base, lpsci_handle_t *handle)
     if (!handle->rxRingBuffer)
     {
         /* Disable RX interrupt. */
-        LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable);
+        LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable |
+                                          kLPSCI_FramingErrorInterruptEnable);
+        /* Disable parity error interrupt when parity mode is enable*/
+        if (UART0_C1_PE_MASK & base->C1)
+        {
+            LPSCI_DisableInterrupts(base, kLPSCI_ParityErrorInterruptEnable);
+        }
     }
 
     handle->rxDataSize = 0U;
@@ -836,9 +868,40 @@ void LPSCI_TransferHandleIRQ(UART0_Type *base, lpsci_handle_t *handle)
     uint8_t count;
     uint8_t tempCount;
 
+    /* If RX parity error */
+    if (UART0_S1_PF_MASK & base->S1)
+    {
+        handle->rxState = kLPSCI_RxParityError;
+
+        LPSCI_ClearStatusFlags(base, kLPSCI_ParityErrorFlag);
+        /* Trigger callback. */
+        if (handle->callback)
+        {
+            handle->callback(base, handle, kStatus_LPSCI_ParityError, handle->userData);
+        }
+    }
+
+    /* If RX framing error */
+    if (UART0_S1_FE_MASK & base->S1)
+    {
+        handle->rxState = kLPSCI_RxFramingError;
+
+        LPSCI_ClearStatusFlags(base, kLPSCI_FramingErrorFlag);
+        /* Trigger callback. */
+        if (handle->callback)
+        {
+            handle->callback(base, handle, kStatus_LPSCI_FramingError, handle->userData);
+        }
+    }
     /* If RX overrun. */
     if (UART0_S1_OR_MASK & base->S1)
     {
+        while (UART0_S1_RDRF_MASK & base->S1)
+        {
+            (void)base->D;
+        }
+
+        LPSCI_ClearStatusFlags(base, kLPSCI_RxOverrunFlag);
         /* Trigger callback. */
         if (handle->callback)
         {
@@ -928,10 +991,30 @@ void LPSCI_TransferHandleIRQ(UART0_Type *base, lpsci_handle_t *handle)
         /* If no receive requst pending, stop RX interrupt. */
         else if (!handle->rxDataSize)
         {
-            LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable);
+            LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable |
+                                              kLPSCI_FramingErrorInterruptEnable);
+
+            /* Disable parity error interrupt when parity mode is enable*/
+            if (UART0_C1_PE_MASK & base->C1)
+            {
+                LPSCI_DisableInterrupts(base, kLPSCI_ParityErrorInterruptEnable);
+            }
         }
         else
         {
+        }
+    }
+    /* If framing error or parity error happened, stop the RX interrupt when ues no ring buffer */
+    if (((handle->rxState == kLPSCI_RxFramingError) || (handle->rxState == kLPSCI_RxParityError)) &&
+        (!handle->rxRingBuffer))
+    {
+        LPSCI_DisableInterrupts(base, kLPSCI_RxDataRegFullInterruptEnable | kLPSCI_RxOverrunInterruptEnable |
+                                          kLPSCI_FramingErrorInterruptEnable);
+
+        /* Disable parity error interrupt when parity mode is enable*/
+        if (UART0_C1_PE_MASK & base->C1)
+        {
+            LPSCI_DisableInterrupts(base, kLPSCI_ParityErrorInterruptEnable);
         }
     }
 
@@ -987,4 +1070,5 @@ void UART0_DriverIRQHandler(void)
 {
     s_lpsciIsr(UART0, s_lpsciHandle[0]);
 }
+
 #endif

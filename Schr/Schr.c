@@ -18,19 +18,20 @@
 /******************************************************************************
 *   Global Variable Definitions
 ******************************************************************************/
-T_OpModeType  ruw_curOpMode = 0x00;
-
-extern volatile SCHM_BOOLEAN re_mngExecflag;
+T_TaskPowerModeType  re_curOpMode;
+volatile SCHM_BOOLEAN re_mngExecflag;
 
 /* Manager/Application main function list */
 const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
 {
-   /* Main function,		Startup delay(ms),   Execution Period x 5 ms),          Group */
-	{apptask_5ms,				1,                  1,								0xFFFF},
-	{apptask_20ms,				4,					4,								0xFFFF},
-	{apptask_100ms,				20,					20,								0xFFFF},
-	{apptask_1s,				200,				200,							0xFFFF},
-  //{function_task_name,		0,					1,								0xFFFF},
+   /* Main function,	Startup delay(ms),   Exec. Period x 5 ms),     Job Powermode*/
+	{apptask_5ms,				1,                  1,					HIGH_POWER},
+	{apptask_20ms,				4,					4,					HIGH_POWER},
+	{apptask_100ms,				20,					20,					HIGH_POWER},
+	{apptask_500ms,				100,				100,				HIGH_POWER},
+	{apptask_1s,				200,				200,				HIGH_POWER},
+	{LP_apptask_1s,				10,					10,					 LOW_POWER},
+  //{function_task_name,		0,					1,					HIGH_POWER},
 
 
 	/* NOTE: this list shall be updated according to E_MODULES_ID_TYPE! */
@@ -54,7 +55,7 @@ void Schr_Init( void )
 
     PIT_StartTimer(PIT, kPIT_Chnl_0);
 
-    ruw_curOpMode = 0x01;
+    re_curOpMode = HIGH_POWER;
 
 }
 
@@ -89,7 +90,7 @@ void Schr_Exec( void )
             /* check each module from the list of modules */
             for (le_mngIndex = (E_MODULES_ID_TYPE)0; le_mngIndex < SCHD_MANAGERS_NUMBER; le_mngIndex++)
             {
-                if (cps_mngTaskList[le_mngIndex].ManagerAPI != SCHM_NULL_PTR)
+                if (cps_mngTaskList[le_mngIndex].JobFunction != SCHM_NULL_PTR)
                 {
                     /* decrement the local counter of modules  */
                     lasw_MngTimeCnt[le_mngIndex] -= TIMER_PERIOD;    
@@ -99,9 +100,9 @@ void Schr_Exec( void )
                         /* set the local module counter */
                         lasw_MngTimeCnt[le_mngIndex] = (T_DelayMainType)cps_mngTaskList[le_mngIndex].ExecutionPeriod;
                         /* check whether the module starts for the current Mode */
-                        if (0 != (cps_mngTaskList[le_mngIndex].UsedInMode & ruw_curOpMode))
+                        if((cps_mngTaskList[le_mngIndex].JobPowerMode) == (re_curOpMode))
                         {
-                            cps_mngTaskList[le_mngIndex].ManagerAPI();    
+                            cps_mngTaskList[le_mngIndex].JobFunction();
                         }
                     }
                 }
@@ -109,7 +110,10 @@ void Schr_Exec( void )
         }
         else
         {
-        	apptask_idle();
+        	if(re_curOpMode == HIGH_POWER)
+        	{
+        		apptask_idle();
+        	}
         }
     }
     while (SCHM_TRUE);
@@ -119,11 +123,13 @@ void Schr_Exec( void )
 
 
 /*-------------------------------------
- * Function: func_name
- * Desc:
- * input:
- * return:
- * Note:
+ * Function: PIT_IRQHandler
+ * Desc: Called in interrupt context
+ * 		to call the increment in
+ * 		the Scheduler, Sys Tick.
+ * input: void
+ * return: void
+ * Note: Called in PIT interrupt context
  * SRS:
  *-----------------------------------*/
 void PIT_IRQHandler(void)

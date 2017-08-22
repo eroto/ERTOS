@@ -29,6 +29,7 @@
 #define CURSOR_INC		0x02u /*Cursor increment*/
 #define CURSOR_DEC		0x00u /*Cursor Decrement*/
 
+/*Disp Commands*/
 #define DISP_FUNC_SET				(uint8_t)0x20u
 #define DISP_CLEAR					(uint8_t)0x01u
 #define DISP_OM						(uint8_t)0x08u
@@ -40,6 +41,16 @@
 #define	DISP_INIT_DELAY				(uint8_t)50u
 #define DISP_DELAY					(uint8_t)100u
 #define ENABLE_WITH					(uint8_t)10u
+
+
+typedef enum
+{
+	SHOW_TIME,
+	SET_TIME,
+	SET_DATE,
+	INVALID_MENU
+}menu_index_type;
+
 
 typedef enum
 {
@@ -137,6 +148,9 @@ typedef enum
 }ASCII_Char;
 
 
+extern menu_index_type SetMenu;
+extern uint8_t Disp_Init_Complete;
+
 void Disp_ON(void);
 void Disp_send_enable(void);
 void Disp_Clear(void);
@@ -147,5 +161,7 @@ void Disp_wait_us(uint64_t usec_time);
 void Disp_Init(void);
 void Disp_write_ASCII(ASCII_Char character);
 void Disp_RefreshCfg(void);
+void Disp_Menues(menu_index_type Menu);
+extern void LCD1602A_Init(void);
 
 #endif /* LCD1602A_H_ */

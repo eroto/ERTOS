@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
+ * Copyright (c) 2016 - 2017 , NXP
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +13,7 @@
  *   list of conditions and the following disclaimer in the documentation and/or
  *   other materials provided with the distribution.
  *
- * o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+ * o Neither the name of copyright holder nor the names of its
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
@@ -31,10 +32,7 @@
 #ifndef _FSL_CLOCK_H_
 #define _FSL_CLOCK_H_
 
-#include "fsl_device_registers.h"
-#include <stdint.h>
-#include <stdbool.h>
-#include <assert.h>
+#include "fsl_common.h"
 
 /*! @addtogroup clock */
 /*! @{ */
@@ -42,13 +40,49 @@
 /*! @file */
 
 /*******************************************************************************
+ * Configurations
+ ******************************************************************************/
+
+/*! @brief Configures whether to check a parameter in a function.
+ *
+ * Some MCG settings must be changed with conditions, for example:
+ *  1. MCGIRCLK settings, such as the source, divider, and the trim value should not change when
+ *     MCGIRCLK is used as a system clock source.
+ *  2. MCG_C7[OSCSEL] should not be changed  when the external reference clock is used
+ *     as a system clock source. For example, in FBE/BLPE/PBE modes.
+ *  3. The users should only switch between the supported clock modes.
+ *
+ * MCG functions check the parameter and MCG status before setting, if not allowed
+ * to change, the functions return error. The parameter checking increases code size,
+ * if code size is a critical requirement, change #MCG_CONFIG_CHECK_PARAM to 0 to
+ * disable parameter checking.
+ */
+#ifndef MCG_CONFIG_CHECK_PARAM
+#define MCG_CONFIG_CHECK_PARAM 0U
+#endif
+
+/*! @brief Configure whether driver controls clock
+ *
+ * When set to 0, peripheral drivers will enable clock in initialize function
+ * and disable clock in de-initialize function. When set to 1, peripheral
+ * driver will not control the clock, application could contol the clock out of
+ * the driver.
+ *
+ * @note All drivers share this feature switcher. If it is set to 1, application
+ * should handle clock enable and disable for all drivers.
+ */
+#if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL))
+#define FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL 0
+#endif
+
+/*******************************************************************************
  * Definitions
  ******************************************************************************/
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief CLOCK driver version 2.2.0. */
-#define FSL_CLOCK_DRIVER_VERSION (MAKE_VERSION(2, 2, 0))
+/*! @brief CLOCK driver version 2.2.1. */
+#define FSL_CLOCK_DRIVER_VERSION (MAKE_VERSION(2, 2, 1))
 /*@}*/
 
 /*! @brief External XTAL0 (OSC0) clock frequency.
@@ -825,6 +859,18 @@ status_t CLOCK_SetInternalRefClkConfig(uint8_t enableMode, mcg_irc_mode_t ircs, 
  * @retval kStatus_Success External reference clock set successfully.
  */
 status_t CLOCK_SetExternalRefClkConfig(mcg_oscsel_t oscsel);
+
+/*!
+ * @brief Set the FLL external reference clock divider value.
+ *
+ * Sets the FLL external reference clock divider value, the register MCG_C1[FRDIV].
+ *
+ * @param frdiv The FLL external reference clock divider value, MCG_C1[FRDIV].
+ */
+static inline void CLOCK_SetFllExtRefDiv(uint8_t frdiv)
+{
+    MCG->C1 = (MCG->C1 & ~MCG_C1_FRDIV_MASK) | MCG_C1_FRDIV(frdiv);
+}
 
 /*!
  * @brief Enables the PLL0 in FLL mode.
