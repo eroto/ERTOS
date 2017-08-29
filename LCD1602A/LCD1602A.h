@@ -30,11 +30,13 @@
 #define CURSOR_DEC		0x00u /*Cursor Decrement*/
 
 /*Disp Commands*/
-#define DISP_FUNC_SET				(uint8_t)0x20u
 #define DISP_CLEAR					(uint8_t)0x01u
-#define DISP_OM						(uint8_t)0x08u
-#define DISP_ENTRY_MODE_SET			(uint8_t)0x04u
 #define DISP_RETURN_HOME			(uint8_t)0x02u
+#define DISP_ENTRY_MODE_SET			(uint8_t)0x04u
+#define DISP_ON						(uint8_t)0x08u
+#define DISP_CURSORDISP_SHIFT		(uint8_t)0x10u
+#define DISP_FUNC_SET				(uint8_t)0x20u
+
 #define DISP_DDRAM_ADDRESS			(uint8_t)0x80u /*Set DDRAM Address*/
 
 
@@ -162,6 +164,15 @@ void Disp_Init(void);
 void Disp_write_ASCII(ASCII_Char character);
 void Disp_RefreshCfg(void);
 void Disp_Menues(menu_index_type Menu);
+
 extern void LCD1602A_Init(void);
+
+
+extern ASCII_Char SetTime_Menu[9];
+extern ASCII_Char SetDate_Menu[9];
+
+extern uint8_t Disp_On_Var;
+extern uint8_t Disp_FuncSet_Var;
+extern uint8_t Disp_EntryMode_Var;
 
 #endif /* LCD1602A_H_ */

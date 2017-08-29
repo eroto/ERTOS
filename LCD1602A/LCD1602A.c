@@ -24,13 +24,23 @@ void Disp_Read_BF(void);
 void LCD1602A_Init(void);
 
 
+/*******************************************
+ * V A R I A B L E S
+ *******************************************/
 uint8_t LCD1602_buffer[32];
 volatile uint8_t x = 0;
 uint8_t Disp_Init_Complete = 0;
 uint8_t refresh_ctr = 0;
-menu_index_type SetMenu = SHOW_TIME;
 
+menu_index_type SetMenu = SHOW_TIME;
 menu_index_type MenuName = SHOW_TIME;
+
+ASCII_Char SetTime_Menu[9] =  {ASCII_S,ASCII_e,ASCII_t,ASCII_space,ASCII_T,ASCII_i,ASCII_m,ASCII_e,ASCII_space};
+ASCII_Char SetDate_Menu[9] = {ASCII_S,ASCII_e,ASCII_t,ASCII_space,ASCII_D,ASCII_a,ASCII_t,ASCII_e,ASCII_space};
+
+uint8_t Disp_On_Var = 0;
+uint8_t Disp_FuncSet_Var = 0;
+uint8_t Disp_EntryMode_Var = 0;
 
 /*-------------------------------------
  * Function: Disp_Init
@@ -46,22 +56,30 @@ void Disp_Init(void)
 	{
 		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
 
+
+		Disp_On_Var = DISP_ON_D;
+		Disp_EntryMode_Var = CURSOR_INC;
+
 		//FunctionSet
 #ifdef LCD_8_DATA_LINES
-		Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
+		Disp_FuncSet_Var = DISP_DL | DISP_N | DISP_F;
+		Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 #ifndef	LCD_8_DATA_LINES
-		Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
+		Disp_FuncSet_Var = DISP_N | DISP_F;
+		Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 
 		//Entry Mode Set
-		//Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
+		Disp_SendCmd(DISP_ENTRY_MODE_SET | Disp_EntryMode_Var);
 
 		//Disp_ON();
-		Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
+		Disp_SendCmd(DISP_ON | Disp_On_Var);
 
-		//Disp_Clear();
-		//Disp_SendCmd(DISP_CLEAR);
+		/*Display Clear*/
+		Disp_SendCmd(DISP_CLEAR);
+
+		Disp_SendCmd(DISP_RETURN_HOME);
 
 		Disp_Init_Complete = TRUE;
 	}
@@ -285,20 +303,20 @@ void Disp_RefreshCfg(void)
 
 	//FunctionSet
 #ifdef LCD_8_DATA_LINES
-	Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
+	Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 #ifndef	LCD_8_DATA_LINES
-	Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
+	Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 
 	//Disp_ON();
-	Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
+	Disp_SendCmd(DISP_ON | Disp_On_Var);
 
 	//Disp_Clear();
-	Disp_SendCmd(DISP_CLEAR);
+	//Disp_SendCmd(DISP_CLEAR);
 
 	//Entry Mode Set
-	Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
+	Disp_SendCmd(DISP_ENTRY_MODE_SET | Disp_EntryMode_Var);
 
 }
 
@@ -362,7 +380,7 @@ void Disp_write_ASCII(ASCII_Char ASCII_character)
 		GPIO_SetPinsOutput(GPIOC, ASCII_LH[i]);
 		GPIO_ClearPinsOutput(GPIOC, ~ASCII_LH[i]);
 		Disp_send_enable();
-		Disp_wait_us(5);
+		//Disp_wait_us(5);
 	}
 #endif
 	GPIO_WritePinOutput(GPIOA, 1, 0); /*Disable RS*/
@@ -416,7 +434,7 @@ void Disp_wait_us(uint64_t usec_time)
 
 
 /*-------------------------------------
- * Function: func_name
+ * Function: Disp_Main
  * Desc: Disp main function called every 500 ms
  * input:
  * return: void
@@ -433,8 +451,9 @@ void Disp_Main(void)
 	if(Deb_Get_SET() == TRUE)
 	{
 		Deb_Clear_SET();
-		SetMenu = 1 + SetMenu;
-
+		SetMenu++;
+		Disp_On_Var = DISP_ON_D | DISP_ON_B;
+		Disp_SendCmd(DISP_ON | Disp_On_Var);
 		if(SetMenu > SET_DATE)
 		{
 			SetMenu = SHOW_TIME;
@@ -442,9 +461,8 @@ void Disp_Main(void)
 	}
 
 
-	refresh_ctr = 1 + refresh_ctr;
-
-	if(refresh_ctr >= 10)
+	refresh_ctr ++;
+	if(refresh_ctr >= 11)
 	{
 		Disp_RefreshCfg();
 		refresh_ctr = 0;
@@ -452,13 +470,12 @@ void Disp_Main(void)
 	l_menu = SetMenu;
 
 	//Disp_SendCmd(DISP_CLEAR);
-	Disp_SendCmd(DISP_RETURN_HOME);
+	//Disp_SendCmd(DISP_RETURN_HOME);
 
 	Disp_Menues(l_menu);
 
-	i = 0;
+	//i = 0;
 	while(LCD1602_buffer[i] != 0xFF)
-	//while(i < 32u)
 	{
 		if(i == 16u)
 		{
@@ -466,8 +483,14 @@ void Disp_Main(void)
 		}
 
 		Disp_write_ASCII(LCD1602_buffer[i]);
-		i = 1 + i;
+		i++;
 	}
+
+/*	if(i>8)
+	{
+		i = 0;
+		Disp_SendCmd(DISP_RETURN_HOME);
+	}*/
 
 	Disp_SendCmd(DISP_RETURN_HOME);
 
@@ -519,14 +542,10 @@ void Disp_Menues(menu_index_type Menu)
 		break;
 
 	case SET_TIME:
-		LCD1602_buffer[0] = ASCII_S;
-		LCD1602_buffer[1] = ASCII_e;
-		LCD1602_buffer[2] = ASCII_t;
-		LCD1602_buffer[3] = ASCII_space;
-		LCD1602_buffer[4] = ASCII_T;
-		LCD1602_buffer[5] = ASCII_i;
-		LCD1602_buffer[6] = ASCII_m;
-		LCD1602_buffer[7] = ASCII_e;
+
+		memcpy(LCD1602_buffer, SetTime_Menu, sizeof(SetTime_Menu));
+		LCD1602_buffer[9] = ASCII_H;
+		LCD1602_buffer[10] = ASCII_colom;
 		break;
 
 	case SET_DATE:

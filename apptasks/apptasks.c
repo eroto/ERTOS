@@ -63,8 +63,7 @@ void apptask_5ms(void)
  *-----------------------------------*/
 void apptask_20ms()
 {
-
-		Disp_Init();
+	Disp_Init();
 
 }
 
@@ -102,6 +101,7 @@ void apptask_100ms(void)
  *-----------------------------------*/
 void apptask_500ms(void)
 {
+
 
 	RTC_SendClock();
 
