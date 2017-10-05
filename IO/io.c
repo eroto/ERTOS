@@ -13,7 +13,8 @@
 GPIO_Type* a_GPIO[PORT_MAX_NUM] = GPIO_BASE_PTRS;
 PORT_Type* a_PORT[PORT_MAX_NUM] = PORT_BASE_PTRS;
 clock_ip_name_t a_PortClk[PORT_MAX_NUM] = {kCLOCK_PortA, kCLOCK_PortB, kCLOCK_PortC, kCLOCK_PortD, kCLOCK_PortE};
-DebStruct_t r_Deb_Array[3] = {{PORT_B,2,1000,0,{.By = 0}},{PORT_B,3,250,0,{.By = 0}},{PORT_E,20,250,0,{.By = 0}}};
+
+DebStruct_t r_Deb_Array[3] = {{PORT_B,2,500,0,{.By = 0}},{PORT_B,3,170,0,{.By = 0}},{PORT_E,20,170,0,{.By = 0}}};
 
 /*Function prototype*/
 /*----------------------------------------------------------------------------------------------*/
@@ -237,7 +238,7 @@ void io_Debounce_Pin_DI(IO_PORT PORT, uint8_t PIN)
 
 
 /*-------------------------------------
- * Function: func_name
+ * Function: io_Debounce_Pin_DI_Low
  * Desc:
  * input:
  * return:
@@ -246,36 +247,34 @@ void io_Debounce_Pin_DI(IO_PORT PORT, uint8_t PIN)
  *-----------------------------------*/
 void io_Debounce_Pin_DI_Low(DebStruct_t *Deb_Struct)
 {
-	if(Deb_Struct->Deb_Flags.bi.b0 == FALSE)
+	uint8_t i = 0;
+	for(i=0; i < 3;i++)
 	{
-		if(io_Read_Pin(a_GPIO[Deb_Struct->Deb_Port], Deb_Struct->Deb_Pin) == TRUE)
+		if(Deb_Struct->Deb_Flags.bi.b0 == FALSE)
 		{
-			Deb_Struct->Deb_Ctr = 1 + Deb_Struct->Deb_Ctr;
+			if(io_Read_Pin(a_GPIO[Deb_Struct->Deb_Port], Deb_Struct->Deb_Pin) == TRUE)
+			{
+				Deb_Struct->Deb_Ctr = 1 + Deb_Struct->Deb_Ctr;
+			}
+			else
+			{
+				Deb_Struct->Deb_Ctr = 0;
+			}
+
+			if(Deb_Struct->Deb_Ctr >= (Deb_Struct->Deb_Time/5u))
+			{
+				Deb_Struct->Deb_Ctr = 0;
+				Deb_Struct->Deb_Flags.bi.b0 = TRUE;
+			}
 		}
 		else
 		{
-			Deb_Struct->Deb_Ctr = 0;
+			/*Is button released*/
+			if(io_Read_Pin(a_GPIO[Deb_Struct->Deb_Port], Deb_Struct->Deb_Pin) == FALSE)
+			{
+				Deb_Struct->Deb_Flags.bi.b1 = TRUE;
+			}
 		}
-
-		if(Deb_Struct->Deb_Ctr >= (Deb_Struct->Deb_Time/5u))
-		{
-			Deb_Struct->Deb_Ctr = 0;
-			Deb_Struct->Deb_Flags.bi.b0 = TRUE;
-		}
-	}
-	else
-	{
-		/*Is button released*/
-		if(io_Read_Pin(a_GPIO[Deb_Struct->Deb_Port], Deb_Struct->Deb_Pin) == FALSE)
-		{
-			Deb_Struct->Deb_Flags.bi.b1 = TRUE;
-		}
+		Deb_Struct++;
 	}
 }
-
-
-
-
-
-
-

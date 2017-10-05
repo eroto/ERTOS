@@ -22,6 +22,7 @@ void Disp_Main(void);
 void Disp_FunctionSet(void);
 void Disp_Read_BF(void);
 void LCD1602A_Init(void);
+void LCD_ShowMenue(uint8_t const *buffer);
 
 
 /*******************************************
@@ -34,9 +35,10 @@ uint8_t refresh_ctr = 0;
 
 menu_index_type SetMenu = SHOW_TIME;
 menu_index_type MenuName = SHOW_TIME;
+menu_SetTime_t Set_Time_Menues = SET_TIME_CFG;
 
-ASCII_Char SetTime_Menu[9] =  {ASCII_S,ASCII_e,ASCII_t,ASCII_space,ASCII_T,ASCII_i,ASCII_m,ASCII_e,ASCII_space};
-ASCII_Char SetDate_Menu[9] = {ASCII_S,ASCII_e,ASCII_t,ASCII_space,ASCII_D,ASCII_a,ASCII_t,ASCII_e,ASCII_space};
+ASCII_Char SetTime_Menu[5] =  {ASCII_T,ASCII_i,ASCII_m,ASCII_e,ASCII_colom};
+ASCII_Char SetDate_Menu[5] = {ASCII_D,ASCII_a,ASCII_t,ASCII_e,ASCII_colom};
 
 uint8_t Disp_On_Var = 0;
 uint8_t Disp_FuncSet_Var = 0;
@@ -52,8 +54,12 @@ uint8_t Disp_EntryMode_Var = 0;
  *-----------------------------------*/
 void Disp_Init(void)
 {
+
+
 	if(Disp_Init_Complete == FALSE)
 	{
+		Set_Time_Menues = SET_TIME_CFG;
+
 		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
 
 
@@ -312,8 +318,8 @@ void Disp_RefreshCfg(void)
 	//Disp_ON();
 	Disp_SendCmd(DISP_ON | Disp_On_Var);
 
-	//Disp_Clear();
-	//Disp_SendCmd(DISP_CLEAR);
+	Disp_Clear();
+	Disp_SendCmd(DISP_CLEAR);
 
 	//Entry Mode Set
 	Disp_SendCmd(DISP_ENTRY_MODE_SET | Disp_EntryMode_Var);
@@ -444,47 +450,23 @@ void Disp_wait_us(uint64_t usec_time)
 void Disp_Main(void)
 {
 
-	uint8_t i = 0;
+	//uint8_t i = 0;
 	volatile static uint16_t a = 0;
-	menu_index_type l_menu = SHOW_TIME;
+	//menu_index_type l_menu = SHOW_TIME;
 
-	if(Deb_Get_SET() == TRUE)
-	{
-		Deb_Clear_SET();
-		SetMenu++;
-		Disp_On_Var = DISP_ON_D | DISP_ON_B;
-		Disp_SendCmd(DISP_ON | Disp_On_Var);
-		if(SetMenu > SET_DATE)
-		{
-			SetMenu = SHOW_TIME;
-		}
-	}
-
-
-	refresh_ctr ++;
+	//refresh_ctr ++;
 	if(refresh_ctr >= 11)
 	{
 		Disp_RefreshCfg();
 		refresh_ctr = 0;
 	}
-	l_menu = SetMenu;
+	//l_menu = SetMenu;
 
-	//Disp_SendCmd(DISP_CLEAR);
-	//Disp_SendCmd(DISP_RETURN_HOME);
 
-	Disp_Menues(l_menu);
+	Disp_Menues();
 
-	//i = 0;
-	while(LCD1602_buffer[i] != 0xFF)
-	{
-		if(i == 16u)
-		{
-			Disp_SendCmd(DISP_DDRAM_ADDRESS|0x40u);
-		}
+	//LCD_ShowMenue(LCD1602_buffer);
 
-		Disp_write_ASCII(LCD1602_buffer[i]);
-		i++;
-	}
 
 /*	if(i>8)
 	{
@@ -492,8 +474,47 @@ void Disp_Main(void)
 		Disp_SendCmd(DISP_RETURN_HOME);
 	}*/
 
-	Disp_SendCmd(DISP_RETURN_HOME);
+	//Disp_SendCmd(DISP_RETURN_HOME);
 
+}
+
+/*-------------------------------------
+ * Function: Disp_CfgBlink
+ * Desc: Config the display to
+ * 		 blink the display cursor
+ * 		 not showing the cursor
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void Disp_CfgBlink(void)
+{
+	//Disp_SendCmd(DISP_CLEAR);
+	Disp_SendCmd(DISP_ON | DISP_ON_D | DISP_ON_C | DISP_ON_B);
+}
+
+/*-------------------------------------
+ * Function: LCD_ShowMenue
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void LCD_ShowMenue(uint8_t const *buffer)
+{
+	uint8_t i = 0;
+	while(buffer[i] != 0xFF)
+		{
+			if(i == 16u)
+			{
+				Disp_SendCmd(DISP_DDRAM_ADDRESS|0x40u);
+			}
+
+			Disp_write_ASCII(buffer[i]);
+			i++;
+		}
 }
 
 /*-------------------------------------
@@ -504,7 +525,7 @@ void Disp_Main(void)
  * Note:
  * SRS:
  *-----------------------------------*/
-void Disp_Menues(menu_index_type Menu)
+void Disp_Menues(void)
 {
 
 	uint8_t  hrd1;
@@ -513,10 +534,18 @@ void Disp_Menues(menu_index_type Menu)
 	uint8_t  mind2;
 	uint8_t  secd1;
 	uint8_t  secd2;
+	uint8_t trigger = 0;
+	static uint8_t MenuShow = 0;
+	static uint8_t value = 1;
 
-	memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+	if(Deb_Get_SET() == TRUE)
+	{
+		Deb_Clear_SET();
+		MenuName++;
 
-	MenuName = Menu;
+		if (MenuName >= INVALID_MENU)
+		{MenuName = SHOW_TIME;}
+	}
 
 	switch (MenuName)
 	{
@@ -539,24 +568,83 @@ void Disp_Menues(menu_index_type Menu)
 		LCD1602_buffer[6] = secd1;
 		LCD1602_buffer[7] = secd2;
 		LCD1602_buffer[8] = ASCII_space;
+
+		LCD_ShowMenue(LCD1602_buffer);
+		Disp_SendCmd(DISP_RETURN_HOME);
+
 		break;
 
 	case SET_TIME:
 
-		memcpy(LCD1602_buffer, SetTime_Menu, sizeof(SetTime_Menu));
-		LCD1602_buffer[9] = ASCII_H;
-		LCD1602_buffer[10] = ASCII_colom;
+			do
+			{
+				switch(Set_Time_Menues)
+				{
+				case SET_TIME_CFG:
+					Disp_CfgBlink();
+					memcpy(LCD1602_buffer, SetTime_Menu, sizeof(SetTime_Menu));
+					LCD1602_buffer[5] = ASCII_0;
+					LCD1602_buffer[6] = ASCII_0;
+					LCD1602_buffer[7] = ASCII_colom;
+					LCD1602_buffer[8] = ASCII_0;
+					LCD1602_buffer[9] = ASCII_0;
+					LCD_ShowMenue(LCD1602_buffer);
+					trigger = 1;
+					Set_Time_Menues = SET_TIME_HR;
+					break;
+
+				case SET_TIME_HR:
+					Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x05);
+					memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+					if(Deb_Get_Increase() == TRUE)
+					{
+						Deb_Clear_Increase();
+						value++;
+					}
+
+					if(value >=10)
+					{
+						if(value <=23)
+						{
+						LCD1602_buffer[0] = (value/10)+ASCII_0;
+						LCD1602_buffer[1] = ASCII_0+(value%10);
+						}
+						else
+						{
+							value = 0;
+							LCD1602_buffer[0] = ASCII_0;
+							LCD1602_buffer[1] = ASCII_0;
+						}
+					}
+					else
+					{
+						LCD1602_buffer[0] = ASCII_0;
+						LCD1602_buffer[1] = ASCII_0+value;
+					}
+
+					LCD_ShowMenue(LCD1602_buffer);
+
+					trigger = 0;
+					break;
+
+				case SET_TIME_MIN:
+					break;
+				}
+			}while(trigger);
 		break;
 
+
 	case SET_DATE:
-		LCD1602_buffer[0] = ASCII_S;
-		LCD1602_buffer[1] = ASCII_e;
-		LCD1602_buffer[2] = ASCII_t;
-		LCD1602_buffer[3] = ASCII_space;
-		LCD1602_buffer[4] = ASCII_D;
-		LCD1602_buffer[5] = ASCII_a;
-		LCD1602_buffer[6] = ASCII_t;
-		LCD1602_buffer[7] = ASCII_e;
+		Set_Time_Menues = SET_TIME_CFG;
+		Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x00);
+		Disp_On_Var = DISP_ON_D | DISP_ON_B;
+		Disp_SendCmd(DISP_ON | Disp_On_Var);
+
+		memcpy(LCD1602_buffer, SetDate_Menu,sizeof(SetDate_Menu));
+		LCD1602_buffer[9] = ASCII_D;
+		LCD1602_buffer[10] = ASCII_colom;
+		LCD_ShowMenue(LCD1602_buffer);
 		break;
 
 	default:

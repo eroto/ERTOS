@@ -21,11 +21,30 @@
 #define DISP_N	0x08u /* 1: 2 Lines			0: 1 Line LCD Lines*/
 #define DISP_F	0x04u /* 1: 5x10 LCD font	0: 5x8 LCD Font*/
 
+/*
+
+S = 1: Accompanies display shift
+S/C = 1: Display shift
+S/C = 0: Cursor move
+R/L = 1: Shift to the right
+R/L = 0: Shift to the left
+DL = 1: 8 bits, DL = 0: 4 bits
+N = 1: 2 lines, N = 0: 1 line
+F = 1: 5 ´ 10 dots, F = 0: 5 ´ 8 dots
+BF = 1: Internally operating
+BF = 0: Instructions acceptable
+*/
+
 #define DISP_ON_D	0x04u /*1: Disp On 		0: Disp Off*/
 #define DISP_ON_C	0x02u /*1: Cursor ON  	0: Cursor OFF*/
 #define DISP_ON_B	0x01u /*1: Blink ON 		0: BLink OFF */
 
 #define CURSOR_SHIFT	0x01u /*TRUE*/
+
+/*
+I/D = 1: Increment
+I/D = 0: Decrement
+*/
 #define CURSOR_INC		0x02u /*Cursor increment*/
 #define CURSOR_DEC		0x00u /*Cursor Decrement*/
 
@@ -36,6 +55,8 @@
 #define DISP_ON						(uint8_t)0x08u
 #define DISP_CURSORDISP_SHIFT		(uint8_t)0x10u
 #define DISP_FUNC_SET				(uint8_t)0x20u
+#define DISP_SET_CGRAM_ADDRESS		(uint8_t)0x40u
+#define DISP_SET_DDRAM_ADDRESS		(uint8_t)0x80u
 
 #define DISP_DDRAM_ADDRESS			(uint8_t)0x80u /*Set DDRAM Address*/
 
@@ -52,6 +73,17 @@ typedef enum
 	SET_DATE,
 	INVALID_MENU
 }menu_index_type;
+
+typedef enum
+{
+	SET_TIME_CFG,
+	SET_TIME_HR,
+	SET_TIME_MIN,
+	SET_TIME_SEC
+}
+menu_SetTime_t;
+
+
 
 
 typedef enum
@@ -163,16 +195,19 @@ void Disp_wait_us(uint64_t usec_time);
 void Disp_Init(void);
 void Disp_write_ASCII(ASCII_Char character);
 void Disp_RefreshCfg(void);
-void Disp_Menues(menu_index_type Menu);
+void Disp_Menues(void);
+void Disp_CfgBlink(void);
 
 extern void LCD1602A_Init(void);
 
 
-extern ASCII_Char SetTime_Menu[9];
-extern ASCII_Char SetDate_Menu[9];
+extern ASCII_Char SetTime_Menu[5];
+extern ASCII_Char SetDate_Menu[5];
 
 extern uint8_t Disp_On_Var;
 extern uint8_t Disp_FuncSet_Var;
 extern uint8_t Disp_EntryMode_Var;
+
+
 
 #endif /* LCD1602A_H_ */
