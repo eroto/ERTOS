@@ -64,7 +64,7 @@ void rtc_init(void)
 	date.minute = 50;
 	date.second = 00;
 
-	RTC_Alarm.year = 2016;
+	RTC_Alarm.year = 2017;
 	RTC_Alarm.month = 11;
 	RTC_Alarm.day = 20;
 	RTC_Alarm.hour = 13;

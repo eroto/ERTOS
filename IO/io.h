@@ -31,6 +31,14 @@ typedef enum
     PORT_MAX_NUM
 }IO_PORT;
 
+typedef enum
+{
+	SET_BUTTON,
+	INCREASE_BUTTON,
+	DECREASE_BUTTON,
+	MAX_BUTTONS
+}DEB_IOs;
+
 typedef struct
 	{
 	IO_PORT Deb_Port;
@@ -44,6 +52,7 @@ typedef struct
 /*----------------------------------------------------------------------------------------------*/
 extern DebStruct_t r_Deb_Array[3];
 
+
 /* Functions prototypes*/
 /*----------------------------------------------------------------------------------------------*/
 void io_init(void);
@@ -53,7 +62,7 @@ extern void io_Debounce_Pin_DI(IO_PORT PORT, uint8_t PIN);
 extern void io_Debounce_Pin_DI_Low(DebStruct_t *Deb_Struct);
 
 
-#define Deb_Get_SET()				(r_Deb_Array[0].Deb_Flags.bi.b1)
+#define GET_AND_CLEAR_SET_BUTTON()	(r_Deb_Array[0].Deb_Flags.bi.b1)
 #define Deb_Clear_SET()				(r_Deb_Array[0].Deb_Flags.By = 0)
 
 #define Deb_Get_Increase()			(r_Deb_Array[1].Deb_Flags.bi.b1)
@@ -61,5 +70,8 @@ extern void io_Debounce_Pin_DI_Low(DebStruct_t *Deb_Struct);
 
 #define Deb_Get_Decrease()			(r_Deb_Array[2].Deb_Flags.bi.b1)
 #define Deb_Clear_Decrease()		(r_Deb_Array[2].Deb_Flags.By = 0)
+
+#define DebounceReached				Deb_Flags.bi.b0
+#define ButtonReleased				Deb_Flags.bi.b1
 
 #endif /* IO_H_ */

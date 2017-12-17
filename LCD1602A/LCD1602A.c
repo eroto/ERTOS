@@ -17,20 +17,31 @@
 
 void Disp_ON(void);
 void Disp_send_enable(void);
-void Disp_Clear(void);
 void Disp_Main(void);
 void Disp_FunctionSet(void);
 void Disp_Read_BF(void);
 void LCD1602A_Init(void);
+void LCD_ShowMenue(uint8_t const *buffer);
+uint16_t Button_IncDec_Mgr(uint16_t value);
 
 
+/*******************************************
+ * V A R I A B L E S
+ *******************************************/
 uint8_t LCD1602_buffer[32];
 volatile uint8_t x = 0;
 uint8_t Disp_Init_Complete = 0;
 uint8_t refresh_ctr = 0;
-menu_index_type SetMenu = SHOW_TIME;
 
+menu_index_type SetMenu = SHOW_TIME;
 menu_index_type MenuName = SHOW_TIME;
+
+ASCII_Char SetTime_Menu[5] =  {ASCII_T,ASCII_i,ASCII_m,ASCII_e,ASCII_colom};
+ASCII_Char SetDate_Menu[5] = {ASCII_D,ASCII_a,ASCII_t,ASCII_e,ASCII_colom};
+
+uint8_t Disp_On_Var = 0;
+uint8_t Disp_FuncSet_Var = 0;
+uint8_t Disp_EntryMode_Var = 0;
 
 /*-------------------------------------
  * Function: Disp_Init
@@ -42,26 +53,37 @@ menu_index_type MenuName = SHOW_TIME;
  *-----------------------------------*/
 void Disp_Init(void)
 {
+
+
 	if(Disp_Init_Complete == FALSE)
 	{
+
 		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+
+		Disp_On_Var = DISP_ON_D;
+		Disp_EntryMode_Var = CURSOR_INC;
 
 		//FunctionSet
 #ifdef LCD_8_DATA_LINES
-		Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
+		Disp_FuncSet_Var = DISP_DL | DISP_N | DISP_F;
+		Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 #ifndef	LCD_8_DATA_LINES
-		Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
+		Disp_FuncSet_Var = DISP_N | DISP_F;
+		Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 
 		//Entry Mode Set
-		//Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
+		Disp_SendCmd(DISP_ENTRY_MODE_SET | Disp_EntryMode_Var);
 
 		//Disp_ON();
-		Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
+		Disp_SendCmd(DISP_ON | Disp_On_Var);
 
-		//Disp_Clear();
-		//Disp_SendCmd(DISP_CLEAR);
+		/*Display Clear*/
+		Disp_SendCmd(DISP_CLEAR);
+
+		Disp_SendCmd(DISP_RETURN_HOME);
 
 		Disp_Init_Complete = TRUE;
 	}
@@ -94,22 +116,6 @@ void Disp_FunctionSet(void)
 }
 
 
-
-/*-------------------------------------
- * Function: func_name
- * Desc:
- * input:
- * return:
- * Note:
- * SRS:
- *-----------------------------------*/
-void Disp_Clear(void)
-{
-	GPIO_SetPinsOutput(GPIOB, 0x01);
-	GPIO_ClearPinsOutput(GPIOB, (uint8_t)~0x01u);
-
-	GPIO_ClearPinsOutput(GPIOC, 0xF0);
-}
 
 /*-------------------------------------
  * Function: Disp_Read_BF
@@ -285,20 +291,19 @@ void Disp_RefreshCfg(void)
 
 	//FunctionSet
 #ifdef LCD_8_DATA_LINES
-	Disp_SendCmd(DISP_FUNC_SET | DISP_DL | DISP_N | DISP_F);
+	Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 #ifndef	LCD_8_DATA_LINES
-	Disp_SendCmd(DISP_FUNC_SET | DISP_N | DISP_F);
+	Disp_SendCmd(DISP_FUNC_SET | Disp_FuncSet_Var);
 #endif
 
 	//Disp_ON();
-	Disp_SendCmd(DISP_OM | DISP_ON_D /*| DISP_ON_C*/);
+	Disp_SendCmd(DISP_ON | Disp_On_Var);
 
-	//Disp_Clear();
 	Disp_SendCmd(DISP_CLEAR);
 
 	//Entry Mode Set
-	Disp_SendCmd(DISP_ENTRY_MODE_SET | CURSOR_INC | CURSOR_SHIFT);
+	Disp_SendCmd(DISP_ENTRY_MODE_SET | Disp_EntryMode_Var);
 
 }
 
@@ -362,7 +367,7 @@ void Disp_write_ASCII(ASCII_Char ASCII_character)
 		GPIO_SetPinsOutput(GPIOC, ASCII_LH[i]);
 		GPIO_ClearPinsOutput(GPIOC, ~ASCII_LH[i]);
 		Disp_send_enable();
-		Disp_wait_us(5);
+		//Disp_wait_us(5);
 	}
 #endif
 	GPIO_WritePinOutput(GPIOA, 1, 0); /*Disable RS*/
@@ -416,7 +421,7 @@ void Disp_wait_us(uint64_t usec_time)
 
 
 /*-------------------------------------
- * Function: func_name
+ * Function: Disp_Main
  * Desc: Disp main function called every 500 ms
  * input:
  * return: void
@@ -426,51 +431,78 @@ void Disp_wait_us(uint64_t usec_time)
 void Disp_Main(void)
 {
 
-	uint8_t i = 0;
+	//uint8_t i = 0;
 	volatile static uint16_t a = 0;
-	menu_index_type l_menu = SHOW_TIME;
+	//menu_index_type l_menu = SHOW_TIME;
 
-	if(Deb_Get_SET() == TRUE)
-	{
-		Deb_Clear_SET();
-		SetMenu = 1 + SetMenu;
-
-		if(SetMenu > SET_DATE)
-		{
-			SetMenu = SHOW_TIME;
-		}
-	}
-
-
-	refresh_ctr = 1 + refresh_ctr;
-
-	if(refresh_ctr >= 10)
+	//refresh_ctr ++;
+	if(refresh_ctr >= 11)
 	{
 		Disp_RefreshCfg();
 		refresh_ctr = 0;
 	}
-	l_menu = SetMenu;
+	//l_menu = SetMenu;
 
-	//Disp_SendCmd(DISP_CLEAR);
-	Disp_SendCmd(DISP_RETURN_HOME);
 
-	Disp_Menues(l_menu);
+	Disp_Menues();
 
-	i = 0;
-	while(LCD1602_buffer[i] != 0xFF)
-	//while(i < 32u)
+	//LCD_ShowMenue(LCD1602_buffer);
+
+
+/*	if(i>8)
 	{
-		if(i == 16u)
-		{
-			Disp_SendCmd(DISP_DDRAM_ADDRESS|0x40u);
-		}
+		i = 0;
+		Disp_SendCmd(DISP_RETURN_HOME);
+	}*/
 
-		Disp_write_ASCII(LCD1602_buffer[i]);
-		i = 1 + i;
+	//Disp_SendCmd(DISP_RETURN_HOME);
+
+}
+
+/*-------------------------------------
+ * Function: Disp_CfgBlink
+ * Desc: Config the display to
+ * 		 blink the display cursor
+ * 		 not showing the cursor
+ * input: State OFF:0 ON:not 0
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void Disp_CfgBlink(uint8_t State)
+{
+	//Disp_SendCmd(DISP_CLEAR);
+	if(State >= ON )
+	{
+		Disp_SendCmd(DISP_ON | DISP_ON_D /*|DISP_ON_C*/ | DISP_ON_B);
 	}
+	else
+	{
+		Disp_SendCmd(DISP_ON | DISP_ON_D);
+	}
+}
 
-	Disp_SendCmd(DISP_RETURN_HOME);
+/*-------------------------------------
+ * Function: LCD_ShowMenue
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void LCD_ShowMenue(uint8_t const *buffer)
+{
+	uint8_t i = 0;
+	while(buffer[i] != 0xFF)
+		{
+			if(i == 16u)
+			{
+				Disp_SendCmd(DISP_DDRAM_ADDRESS|0x40u);
+			}
 
+			Disp_write_ASCII(buffer[i]);
+			i++;
+		}
 }
 
 /*-------------------------------------
@@ -481,7 +513,7 @@ void Disp_Main(void)
  * Note:
  * SRS:
  *-----------------------------------*/
-void Disp_Menues(menu_index_type Menu)
+void Disp_Menues(void)
 {
 
 	uint8_t  hrd1;
@@ -490,10 +522,10 @@ void Disp_Menues(menu_index_type Menu)
 	uint8_t  mind2;
 	uint8_t  secd1;
 	uint8_t  secd2;
+	uint8_t trigger = 0;
+	static uint8_t MenuShow = 0;
+	static uint16_t value;
 
-	memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
-
-	MenuName = Menu;
 
 	switch (MenuName)
 	{
@@ -516,32 +548,241 @@ void Disp_Menues(menu_index_type Menu)
 		LCD1602_buffer[6] = secd1;
 		LCD1602_buffer[7] = secd2;
 		LCD1602_buffer[8] = ASCII_space;
+
+		LCD_ShowMenue(LCD1602_buffer);
+		Disp_SendCmd(DISP_RETURN_HOME);
+
 		break;
 
-	case SET_TIME:
-		LCD1602_buffer[0] = ASCII_S;
-		LCD1602_buffer[1] = ASCII_e;
-		LCD1602_buffer[2] = ASCII_t;
-		LCD1602_buffer[3] = ASCII_space;
-		LCD1602_buffer[4] = ASCII_T;
-		LCD1602_buffer[5] = ASCII_i;
-		LCD1602_buffer[6] = ASCII_m;
-		LCD1602_buffer[7] = ASCII_e;
+	case SET_TIME_CFG:
+		Disp_CfgBlink(ON);
+		memcpy(LCD1602_buffer, SetTime_Menu, sizeof(SetTime_Menu));
+		LCD1602_buffer[5] = ASCII_0;
+		LCD1602_buffer[6] = ASCII_0;
+		LCD1602_buffer[7] = ASCII_colom;
+		LCD1602_buffer[8] = ASCII_0;
+		LCD1602_buffer[9] = ASCII_0;
+		LCD_ShowMenue(LCD1602_buffer);
+
+		memcpy((void *) &value, (const void *) &date, sizeof(date));
+
+		MenuName = SET_TIME_HR;
 		break;
 
-	case SET_DATE:
-		LCD1602_buffer[0] = ASCII_S;
-		LCD1602_buffer[1] = ASCII_e;
-		LCD1602_buffer[2] = ASCII_t;
-		LCD1602_buffer[3] = ASCII_space;
-		LCD1602_buffer[4] = ASCII_D;
-		LCD1602_buffer[5] = ASCII_a;
-		LCD1602_buffer[6] = ASCII_t;
-		LCD1602_buffer[7] = ASCII_e;
+	case SET_TIME_HR:
+		Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x05);
+		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+		value = date.hour;
+
+		value = Button_IncDec_Mgr(value);
+
+
+		if(value >=10)
+		{
+			if(value <=23)
+			{
+			LCD1602_buffer[0] = (value/10)+ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+(value%10);
+			}
+			else
+			{
+				value = 0;
+				LCD1602_buffer[0] = ASCII_0;
+				LCD1602_buffer[1] = ASCII_0;
+			}
+		}
+		else
+		{
+			LCD1602_buffer[0] = ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+value;
+		}
+
+		LCD_ShowMenue(LCD1602_buffer);
+
+		date.hour = (uint8_t)value;
+
+		rtc_SetDatetime(&date);
+
+		trigger = 0;
+		break;
+
+	case SET_TIME_MIN:
+		Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x08);
+		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+		value = date.minute;
+
+		value = Button_IncDec_Mgr(value);
+
+		if(value >=10)
+		{
+			if(value <=59)
+			{
+			LCD1602_buffer[0] = (value/10)+ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+(value%10);
+			}
+			else
+			{
+				value = 0;
+				LCD1602_buffer[0] = ASCII_0;
+				LCD1602_buffer[1] = ASCII_0;
+			}
+		}
+		else
+		{
+			LCD1602_buffer[0] = ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+value;
+		}
+
+		LCD_ShowMenue(LCD1602_buffer);
+
+		date.minute = (uint8_t)value;
+
+		rtc_SetDatetime(&date);
+
+		break;
+			//}while(trigger);
+
+
+	case SET_DATE_CFG:
+		Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x00);
+		Disp_On_Var = DISP_ON_D | DISP_ON_B;
+		Disp_SendCmd(DISP_ON | Disp_On_Var);
+
+		memcpy(LCD1602_buffer, SetDate_Menu,sizeof(SetDate_Menu));
+		LCD1602_buffer[5] = ASCII_D;
+		LCD1602_buffer[6] = ASCII_D;
+		LCD1602_buffer[7] = ASCII_slash;
+		LCD1602_buffer[8] = ASCII_M;
+		LCD1602_buffer[9] = ASCII_M;
+		LCD1602_buffer[10] = ASCII_slash;
+		LCD1602_buffer[11] = ASCII_A;
+		LCD1602_buffer[12] = ASCII_A;
+
+		value = 1;
+		LCD_ShowMenue(LCD1602_buffer);
+		MenuName = SET_DATE_DAY;
+		break;
+
+	case SET_DATE_DAY:
+		Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x05);
+		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+		value = date.day;
+
+		value = Button_IncDec_Mgr(value);
+
+		if(value >=10)
+		{
+			if(value <=31)
+			{
+			LCD1602_buffer[0] = (value/10)+ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+(value%10);
+			}
+			else
+			{
+				value = 1;
+				LCD1602_buffer[0] = ASCII_0;
+				LCD1602_buffer[1] = ASCII_1;
+			}
+		}
+		else
+		{
+			LCD1602_buffer[0] = ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+value;
+		}
+
+		LCD_ShowMenue(LCD1602_buffer);
+		date.day = (uint8_t)value;
+		rtc_SetDatetime(&date);
+		break;
+
+	case SET_DATE_MONTH:
+		Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x08);
+		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+		value = date.month;
+
+		value = Button_IncDec_Mgr(value);
+
+		if(value >=10)
+		{
+			if(value <=12)
+			{
+			LCD1602_buffer[0] = (value/10)+ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+(value%10);
+			}
+			else
+			{
+				value = 1;
+				LCD1602_buffer[0] = ASCII_0;
+				LCD1602_buffer[1] = ASCII_1;
+			}
+		}
+		else
+		{
+			LCD1602_buffer[0] = ASCII_0;
+			LCD1602_buffer[1] = ASCII_0+value;
+		}
+
+		LCD_ShowMenue(LCD1602_buffer);
+		date.month = (uint8_t)value;
+		rtc_SetDatetime(&date);
+		break;
+
+	case SET_DATE_YEAR:
+		Disp_SendCmd(DISP_SET_DDRAM_ADDRESS|0x0Bu);
+		memset(LCD1602_buffer, 0xFFu, sizeof(LCD1602_buffer));
+
+		value = date.year;
+
+		value = Button_IncDec_Mgr(value);
+
+		if(value >=2000u)
+		{
+			LCD1602_buffer[0] = (value/1000)+ASCII_0;
+			LCD1602_buffer[1] = ((value%1000)/100)+ASCII_0;
+			LCD1602_buffer[2] = (((value%1000)%100)/10)+ASCII_0;
+			LCD1602_buffer[3] = (((value%1000)%100)%10)+ASCII_0;
+		}
+		else
+		{
+			value = 2000u;
+			LCD1602_buffer[0] = ASCII_2;
+			LCD1602_buffer[1] = ASCII_0;
+			LCD1602_buffer[2] = ASCII_0;
+			LCD1602_buffer[3] = ASCII_0;
+		}
+
+		LCD_ShowMenue(LCD1602_buffer);
+
+		date.year = value;
+		rtc_SetDatetime(&date);
+		break;
+
+	case SET_COMPLETE:
+		MenuName = SHOW_TIME;
+		Disp_CfgBlink(OFF);
+		Disp_SendCmd(DISP_CLEAR);
+		rtc_Start();
 		break;
 
 	default:
 		break;
+	}
+
+	if(Get_and_Clear(SET_BUTTON))
+	{
+		MenuName++;
+
+		if(MenuName == SET_DATE_YEAR)
+		{value = 2000u;}
+
+		if (MenuName >= INVALID_MENU)
+		{
+			MenuName = SHOW_TIME;
+		}
 	}
 
 }
@@ -562,4 +803,29 @@ void Disp_send_enable(void)
 	Disp_wait_us(ENABLE_WITH);
 
 	GPIO_WritePinOutput(GPIOC, 0, FALSE);
+}
+
+
+/*-------------------------------------
+ * Function: Button_IncDec_Mgr
+ * Desc:
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+uint16_t Button_IncDec_Mgr(uint16_t value)
+{
+	if(Get_and_Clear(INCREASE_BUTTON) == TRUE)
+	{
+		value++;
+	}
+	else if(Get_and_Clear(DECREASE_BUTTON) == TRUE)
+	{
+		value--;
+	}
+	else
+	{/*Do nothing*/}
+
+	return value;
 }

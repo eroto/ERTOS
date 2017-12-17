@@ -48,7 +48,8 @@
 /*
  * @brief   Application entry point.
  */
-int main(void) {
+int main(void)
+{
 
   	/* Init board hardware. */
     BOARD_InitBootPins();

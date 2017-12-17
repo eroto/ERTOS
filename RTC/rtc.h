@@ -11,6 +11,7 @@
 #include "fsl_port.h"
 
 extern rtc_datetime_t Temp_date;
+extern rtc_datetime_t date;
 
 void rtc_init(void);
 void rtc_Start(void);

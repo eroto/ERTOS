@@ -49,3 +49,4 @@ Debug/sources.mk
 /Debug/
 /Release/
 
+*.launch
