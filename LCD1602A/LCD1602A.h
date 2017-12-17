@@ -69,19 +69,18 @@ I/D = 0: Decrement
 typedef enum
 {
 	SHOW_TIME,
-	SET_TIME,
-	SET_DATE,
-	INVALID_MENU
-}menu_index_type;
-
-typedef enum
-{
 	SET_TIME_CFG,
 	SET_TIME_HR,
 	SET_TIME_MIN,
-	SET_TIME_SEC
-}
-menu_SetTime_t;
+	SET_DATE_CFG,
+	SET_DATE_DAY,
+	SET_DATE_MONTH,
+	SET_DATE_YEAR,
+	SET_COMPLETE,
+	INVALID_MENU
+}menu_index_type;
+
+
 
 
 
@@ -196,7 +195,7 @@ void Disp_Init(void);
 void Disp_write_ASCII(ASCII_Char character);
 void Disp_RefreshCfg(void);
 void Disp_Menues(void);
-void Disp_CfgBlink(void);
+void Disp_CfgBlink(uint8_t State);
 
 extern void LCD1602A_Init(void);
 

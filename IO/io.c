@@ -14,7 +14,7 @@ GPIO_Type* a_GPIO[PORT_MAX_NUM] = GPIO_BASE_PTRS;
 PORT_Type* a_PORT[PORT_MAX_NUM] = PORT_BASE_PTRS;
 clock_ip_name_t a_PortClk[PORT_MAX_NUM] = {kCLOCK_PortA, kCLOCK_PortB, kCLOCK_PortC, kCLOCK_PortD, kCLOCK_PortE};
 
-DebStruct_t r_Deb_Array[3] = {{PORT_B,2,500,0,{.By = 0}},{PORT_B,3,170,0,{.By = 0}},{PORT_E,20,170,0,{.By = 0}}};
+DebStruct_t r_Deb_Array[3] = {{PORT_B,2,500,0,{.By = 0}},{PORT_B,3,60,0,{.By = 0}},{PORT_E,20,60,0,{.By = 0}}};
 
 /*Function prototype*/
 /*----------------------------------------------------------------------------------------------*/
@@ -240,7 +240,12 @@ void io_Debounce_Pin_DI(IO_PORT PORT, uint8_t PIN)
 /*-------------------------------------
  * Function: io_Debounce_Pin_DI_Low
  * Desc:
- * input:
+ * input:array of struct
+		IO_PORT Deb_Port;
+		uint8_t Deb_Pin;
+		uint16_t Deb_Time;
+		uint16_t Deb_Ctr;
+		tuflag_8_Type Deb_Flags;
  * return:
  * Note:
  * SRS:
@@ -248,9 +253,9 @@ void io_Debounce_Pin_DI(IO_PORT PORT, uint8_t PIN)
 void io_Debounce_Pin_DI_Low(DebStruct_t *Deb_Struct)
 {
 	uint8_t i = 0;
-	for(i=0; i < 3;i++)
+	for(i=0; i < (uint8_t)sizeof(Deb_Struct);i++)
 	{
-		if(Deb_Struct->Deb_Flags.bi.b0 == FALSE)
+		if(Deb_Struct->DebounceReached == FALSE)
 		{
 			if(io_Read_Pin(a_GPIO[Deb_Struct->Deb_Port], Deb_Struct->Deb_Pin) == TRUE)
 			{
@@ -264,7 +269,7 @@ void io_Debounce_Pin_DI_Low(DebStruct_t *Deb_Struct)
 			if(Deb_Struct->Deb_Ctr >= (Deb_Struct->Deb_Time/5u))
 			{
 				Deb_Struct->Deb_Ctr = 0;
-				Deb_Struct->Deb_Flags.bi.b0 = TRUE;
+				Deb_Struct->DebounceReached = TRUE;
 			}
 		}
 		else
@@ -272,9 +277,31 @@ void io_Debounce_Pin_DI_Low(DebStruct_t *Deb_Struct)
 			/*Is button released*/
 			if(io_Read_Pin(a_GPIO[Deb_Struct->Deb_Port], Deb_Struct->Deb_Pin) == FALSE)
 			{
-				Deb_Struct->Deb_Flags.bi.b1 = TRUE;
+				Deb_Struct->ButtonReleased = TRUE;
 			}
 		}
 		Deb_Struct++;
 	}
+}
+
+
+/*-------------------------------------
+ * Function: io_Debounce_Pin_DI_Low
+ * Desc:
+ * input: enum DEB_IOs I/O to check
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+uint8_t Get_and_Clear(DEB_IOs IO)
+{
+	uint8_t result = FALSE;
+
+	if(r_Deb_Array[IO].DebounceReached && r_Deb_Array[IO].ButtonReleased)
+	{
+		r_Deb_Array[IO].Deb_Flags.By = 0;
+		result = TRUE;
+	}
+
+	return result;
 }
