@@ -73,5 +73,6 @@ void InitApp2(void)
 	relayctrl_init();
 	LCD1602A_Init();
 	Schr_Init();
+	PWM_Init();
 
 }
