@@ -18,7 +18,7 @@ uint8_t UartSendBuffer[UART_BUFFER_MAX_SIZE];
 uart_transfer_t sendXfer;
 uart_transfer_t receiveXfer;
 uint8_t PublicSendData[UART_BUFFER_MAX_SIZE];
-uint8_t UartReceiveData[1];
+uint8_t receiveData[32];
 
 static T_UART_STATES uart_State = UART_IDLE;
 static uint8_t UART_init_pattern = 0x00;
@@ -35,6 +35,69 @@ T_UART_STATES uart_IDLE(void);
 status_t uart_Send(void);
 status_t uart_Receive(void);
 void uart_RXINV(UART_Type *base, uint8_t invert);
+
+
+/*-------------------------------------
+ * Function: uart_init
+ *
+ * Desc: This function is called after
+ * 		reset, and initialize the UART to
+ * 		default values 115200bps, no parity
+ * 		8bits x char, one stop bit Tx enable
+ * 		Rx enable
+ *
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+void uart_init(void)
+{
+    UART_GetDefaultConfig(&user_config);
+    user_config.baudRate_Bps = 115200U;
+    user_config.enableTx = true;
+    user_config.enableRx = true;
+    user_config.stopBitCount = kUART_OneStopBit;
+    user_config.parityMode = kUART_ParityDisabled;
+
+    /* Initialize LPUART0 pins below */
+    /* Changes PORTE_PCR1 register UART1_TX*/
+    PORT_SetPinMux(PORTE, 0u, kPORT_MuxAlt3);
+
+    /* Changes PORTE_PCR2 register UART1_RX*/
+    PORT_SetPinMux(PORTE, 1u, kPORT_MuxAlt3);
+
+    /* Ungate the port clock */
+    CLOCK_EnableClock(kCLOCK_PortE);
+
+    if(UART_Init(UART1,&user_config,UART_srcClock_Hz) == kStatus_Success)
+    {
+		UART_TransferCreateHandle(UART1, &g_uartHandle, (uart_transfer_callback_t) uart_Callback, NULL);
+
+		//UART_ClearStatusFlags(UART1, kUART_RxDataRegFullFlag|kUART_TransmissionCompleteFlag|kUART_TxDataRegEmptyFlag);
+
+		//uart_RXINV(UART1, TRUE);
+
+		RxStat = uart_Receive();
+
+		//UART_EnableInterrupts(UART1, kUART_RxDataRegFullInterruptEnable|kUART_RxActiveEdgeInterruptEnable);
+
+		//EnableIRQ(UART1_IRQn);
+
+
+		uart_State = UART_IDLE;
+
+		UART_init_pattern = UART_INIT_PATTERN;
+
+
+		UART1->C2 |= (UART_C2_TE_MASK | UART_C2_RE_MASK);
+    }
+    else
+    {
+    	uart_State = UART_INIT_ERROR;
+    }
+}
+
 
 /*-------------------------------------
  * Function: uart_IDLE
@@ -54,39 +117,39 @@ T_UART_STATES uart_IDLE(void)
 	{
 		NextSate = UART_INIT_ERROR;
 	}
-//	else if(DataInQueu == TRUE)
-//	{
-//		sendReq_satus = uart_Send();
-//		if(sendReq_satus == kStatus_Success)
-//		{
-//			DataInQueu = FALSE;
-//			NextSate = UART_TX;
-//			txFinished = FALSE;
-//			last_index = 0;
-//		}
-//		else
-//		{
-//			if(uart_TX_TimeOut_ctr >= 3)
-//			{
-//				NextSate = UART_TXRX_ERROR;
-//				uart_TX_TimeOut_ctr = 0;
-//			}
-//			else
-//			{
-//				NextSate = UART_IDLE;
-//			}
-//			uart_TX_TimeOut_ctr ++;
-//		}
-//	}
-	else//if(rxFinished == TRUE)
+	else
+	{
+		if(DataInQueu == TRUE)
+		{
+			sendReq_satus = uart_Send();
+			if(sendReq_satus == kStatus_Success)
+			{
+				DataInQueu = FALSE;
+				NextSate = UART_TX;
+				txFinished = FALSE;
+				last_index = 0;
+			}
+			else
+			{
+				if(uart_TX_TimeOut_ctr >= 3)
+				{
+					NextSate = UART_TXRX_ERROR;
+					uart_TX_TimeOut_ctr = 0;
+				}
+				else
+				{
+					NextSate = UART_IDLE;
+				}
+				uart_TX_TimeOut_ctr ++;
+			}
+		}
+	}
+
+	if(rxFinished == TRUE)
 	{
 		//uart_Receive();
 		//rxFinished = FALSE;
 		//NextSate = UART_RX;
-	}
-
-	//else
-	{
 		NextSate = UART_IDLE;
 	}
 
@@ -169,69 +232,7 @@ void uart_main(void)
 
 
 
-/*-------------------------------------
- * Function: uart_init
- *
- * Desc: This function is called after
- * 		reset, and initialize the UART to
- * 		default values 115200bps, no parity
- * 		8bits x char, one stop bit Tx enable
- * 		Rx enable
- *
- * input:
- * return:
- * Note:
- * SRS:
- *-----------------------------------*/
-void uart_init(void)
-{
-    UART_GetDefaultConfig(&user_config);
-    user_config.baudRate_Bps = 115200U;
-    user_config.enableTx = FALSE;
-    user_config.enableRx = FALSE;
-    user_config.stopBitCount = kUART_OneStopBit;
-    user_config.parityMode = kUART_ParityDisabled;
 
-    /* Initialize LPUART0 pins below */
-    /* Affects PORTE_PCR1 register UART1_TX*/
-    PORT_SetPinMux(PORTE, 0u, kPORT_MuxAlt3);
-
-    /* Affects PORTE_PCR2 register UART1_RX*/
-    PORT_SetPinMux(PORTE, 1u, kPORT_MuxAlt3);
-
-    /* Ungate the port clock */
-    CLOCK_EnableClock(kCLOCK_PortE);
-
-    if(UART_Init(UART1,&user_config,UART_srcClock_Hz) == kStatus_Success)
-    {
-		UART_TransferCreateHandle(UART1, &g_uartHandle, (uart_transfer_callback_t) uart_Callback, NULL);
-
-		UART_ClearStatusFlags(UART1, kUART_RxDataRegFullFlag|kUART_TransmissionCompleteFlag|kUART_TxDataRegEmptyFlag);
-
-		//uart_RXINV(UART1, TRUE);
-
-		//RxStat = uart_Receive();
-
-		//UART_EnableInterrupts(UART1, kUART_RxDataRegFullInterruptEnable|kUART_RxActiveEdgeInterruptEnable);
-
-		//EnableIRQ(UART1_IRQn);
-
-
-		uart_State = UART_IDLE;
-
-		UART_init_pattern = UART_INIT_PATTERN;
-
-
-		UART1->C2 |= (UART_C2_TE_MASK | UART_C2_RE_MASK);
-
-    }
-    else
-    {
-    	uart_State = UART_INIT_ERROR;
-    }
-
-
-}
 
 
 /*-------------------------------------
@@ -261,8 +262,8 @@ void uart_RXINV(UART_Type *base, uint8_t invert)
 
 /*-------------------------------------
  * Function: uart_Send
- * Desc: This function is called to
- *		 start a UART Tx request using UART1.
+ * Desc: This function is called to prepare
+ *		 and start a UART Tx request using UART1.
  * 		UART Handle shall be available/created
  * 		before using this interface
  *
@@ -277,6 +278,7 @@ void uart_RXINV(UART_Type *base, uint8_t invert)
 status_t uart_Send(void)
 {
 	status_t result = kStatus_Fail;
+
 	// Prepare to send.
 	sendXfer.data = UartSendBuffer;//sendData;
 	sendXfer.dataSize = last_index;//sizeof(sendData)/sizeof(sendData[0]);
@@ -285,10 +287,11 @@ status_t uart_Send(void)
 	return result;
 }
 
+
 /*-------------------------------------
  * Function: uart_Receive
- * Desc: This function is called to
- *		 Rx UART Datat using UART1.
+ * Desc: This function is called to prepare
+ *		 UART RX (Receive) Datat using UART1.
  * 		UART Handle shall be available/created
  * 		before using this interface
  *
@@ -304,8 +307,9 @@ status_t uart_Receive(void)
 {
 	status_t result = kStatus_InvalidArgument;
 
-	//receiveXfer.data = UartReceiveData;
-	//receiveXfer.dataSize = 1u;
+	receiveXfer.data = receiveData;
+	receiveXfer.dataSize = sizeof(receiveData)/sizeof(receiveData[0]);
+	rxFinished = false;
 
 	//if(RxStat != kStatus_UART_RxBusy || rxFinished == TRUE)
 	//{
@@ -337,6 +341,7 @@ status_t uart_ReqTx(uint8_t* lpub_data, uint8_t lub_size)
 
 	if(UART_init_pattern == UART_INIT_PATTERN)
 	{
+		/*check there is data to Transmit*/
 		if(lpub_data != NULL )
 		{
 			if((lub_size > 0) && (lub_size <= 49))
@@ -380,6 +385,11 @@ void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void
     {
         rxFinished = true;
     }
+    else if(kStatus_UART_FramingError == status)
+    {
+    	UART_ClearStatusFlags(UART1, kUART_FramingErrorFlag);
+    	rxFinished = 0x58;
+    }
 
 //    else if(kStatus_UART_RxRingBufferOverrun == status)
 //    {
@@ -391,38 +401,13 @@ void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void
 //    {
 //    	rxFinished = true;
 //    }
-
-    else if(kStatus_UART_FramingError == status)
+    else
     {
-    	UART_ClearStatusFlags(UART1, kUART_FramingErrorFlag);
-    	rxFinished = 0x58;
+    	//TODO handle the error
     }
+
 
     //UART_ClearStatusFlags(UART1, kUART_TransmissionCompleteFlag|kUART_TxDataRegEmptyFlag|kUART_RxDataRegFullFlag|kUART_FramingErrorFlag);
     //UART_ClearStatusFlags(UART1, );
 }
 
-
-/*-------------------------------------
- * Function: UART1_IRQHandler
- * Desc:
- * input:
- * return:
- * Note:
- * SRS:
- *-----------------------------------*/
-//void UART1_IRQHandler(void)
-//{
-//    static volatile UartIRQ = 0;
-//
-//    if(kUART_RxDataRegFullFlag & UART_GetStatusFlags(UART1))
-//	{
-//    	UartIRQ = UartIRQ++;
-//	}
-//    else if(kUART_RxActiveEdgeFlag & UART_GetStatusFlags(UART1))
-//    {
-//    	UartIRQ = 0x55u;
-//    }
-//
-//    UART_ClearStatusFlags(UART1, kUART_TransmissionCompleteFlag | kUART_RxDataRegFullFlag | kUART_RxActiveEdgeFlag);
-//}
