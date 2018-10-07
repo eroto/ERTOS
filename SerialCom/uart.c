@@ -390,6 +390,11 @@ void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void
     	UART_ClearStatusFlags(UART1, kUART_FramingErrorFlag);
     	rxFinished = 0x58;
     }
+    else
+    {
+    	//TODO handle the error
+    }
+
 
 //    else if(kStatus_UART_RxRingBufferOverrun == status)
 //    {
@@ -401,10 +406,6 @@ void uart_Callback(UART_Type *base, uart_handle_t *handle, status_t status, void
 //    {
 //    	rxFinished = true;
 //    }
-    else
-    {
-    	//TODO handle the error
-    }
 
 
     //UART_ClearStatusFlags(UART1, kUART_TransmissionCompleteFlag|kUART_TxDataRegEmptyFlag|kUART_RxDataRegFullFlag|kUART_FramingErrorFlag);
