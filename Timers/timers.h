@@ -10,5 +10,10 @@
 
 extern void timers_init(void);
 extern void PIT_INIT_LP(void);
+extern void PWM_Init(void);
+
+
+/* Get source clock for TPM driver */
+#define TPM_SOURCE_CLOCK CLOCK_GetFreq(kCLOCK_PllFllSelClk)
 
 #endif /* TIMERS_H_ */

@@ -11,6 +11,7 @@
 #include "io.h"
 #include "mytypedef.h"
 #include "fsl_pit.h"
+#include "fsl_tpm.h"
 #include "rtc.h"
 #include "uart.h"
 #include "LCD1602A.h"
@@ -42,6 +43,8 @@ ASCII_Char SetDate_Menu[5] = {ASCII_D,ASCII_a,ASCII_t,ASCII_e,ASCII_colom};
 uint8_t Disp_On_Var = 0;
 uint8_t Disp_FuncSet_Var = 0;
 uint8_t Disp_EntryMode_Var = 0;
+
+uint8_t Dutycycle = 25;
 
 /*-------------------------------------
  * Function: Disp_Init
@@ -783,6 +786,18 @@ void Disp_Menues(void)
 		{
 			MenuName = SHOW_TIME;
 		}
+	}
+
+	if(Get_and_Clear(INCREASE_BUTTON))
+	{
+		Dutycycle = Dutycycle + 2;
+		TPM_UpdatePwmDutycycle(TPM0, kTPM_Chnl_3, kTPM_CenterAlignedPwm, Dutycycle);
+	}
+
+	if(Get_and_Clear(DECREASE_BUTTON))
+	{
+		Dutycycle = Dutycycle - 2;
+		TPM_UpdatePwmDutycycle(TPM0, kTPM_Chnl_3, kTPM_CenterAlignedPwm, Dutycycle);
 	}
 
 }

@@ -56,10 +56,9 @@ clean:
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "ERTOS.axf"; # arm-none-eabi-objcopy -v -O binary "ERTOS.axf" "ERTOS.bin" ; # checksum -p MKL25Z128xxx4 -d "ERTOS.bin";
+	-arm-none-eabi-size "ERTOS.axf" ; checksum -p MKL25Z128xxx4 -d "ERTOS.hex" ; # arm-none-eabi-objcopy -v -O binary "ERTOS.axf" "ERTOS.bin" ; # arm-none-eabi-objcopy -O ihex "ERTOS.axf" "ERTOS.hex"
 	-@echo ' '
 
-.PHONY: all clean dependents
-.SECONDARY: post-build
+.PHONY: all clean dependents post-build
 
 -include ../makefile.targets

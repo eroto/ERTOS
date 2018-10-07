@@ -20,6 +20,8 @@
 
 #define UART_INIT_PATTERN 		(uint8_t)0xccu
 
+#define UART_srcClock_Hz		(uint32_t)24000000U
+
 typedef enum
 {
 	UART_IDLE,

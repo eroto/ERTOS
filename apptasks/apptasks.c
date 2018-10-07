@@ -103,7 +103,8 @@ void apptask_500ms(void)
 {
 
 
-	RTC_SendClock();
+	/*Send the RTC over UAT*/
+//	RTC_SendClock();
 
 	Disp_Main();
 }

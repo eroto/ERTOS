@@ -46,22 +46,25 @@ void io_init(void)
 
     /*Pin Cfg for LCD 1602*/
 #ifdef LCD_8_DATA_LINES
-    io_Pin_Cfg(PORT_B, 0, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D0*/
-	io_Pin_Cfg(PORT_B, 1, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D1*/
-	io_Pin_Cfg(PORT_B, 2, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D2*/
-	io_Pin_Cfg(PORT_B, 3, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D3*/
+    io_Pin_Cfg(PORT_B, 0u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D0*/
+	io_Pin_Cfg(PORT_B, 1u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D1*/
+	io_Pin_Cfg(PORT_B, 2u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D2*/
+	io_Pin_Cfg(PORT_B, 3u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D3*/
 #else
-	io_Pin_Cfg(PORT_B, 0, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN1*/
-	io_Pin_Cfg(PORT_B, 1, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN2*/
+	io_Pin_Cfg(PORT_B, 0u, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN1*/
+	io_Pin_Cfg(PORT_B, 1u, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN2*/
 
-	io_Pin_Cfg(PORT_B, 2, kGPIO_DigitalInput, kPORT_PullDown);/*Set Time*/
-	io_Pin_Cfg(PORT_B, 3, kGPIO_DigitalInput, kPORT_PullDown);/*Time +*/
-	io_Pin_Cfg(PORT_E, 20, kGPIO_DigitalInput, kPORT_PullDown);/*Time -*/
+	io_Pin_Cfg(PORT_B, 2u, kGPIO_DigitalInput, kPORT_PullDown);/*Set Time*/
+	io_Pin_Cfg(PORT_B, 3u, kGPIO_DigitalInput, kPORT_PullDown);/*Time +*/
+	io_Pin_Cfg(PORT_E, 20u, kGPIO_DigitalInput, kPORT_PullDown);/*Time -*/
 #endif
 
-	io_Pin_Cfg(PORT_C, 0, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 E*/
+	//io_Pin_Cfg(PORT_E,0u,kGPIO_DigitalOutput,kPORT_PullUp); //UART1 TX
+	//io_Pin_Cfg(PORT_E,1u,kGPIO_DigitalInput,kPORT_PullUp); //UART1 RX
 
-	io_Pin_Cfg(PORT_C, 4, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D4*/
+	io_Pin_Cfg(PORT_C, 0u, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 E*/
+
+	io_Pin_Cfg(PORT_C, 4u, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D4*/
     io_Pin_Cfg(PORT_C, 5, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D5*/
     io_Pin_Cfg(PORT_C, 6, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D6*/
     io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput, kPORT_PullDisable); /*LCD 1602 D7*/
