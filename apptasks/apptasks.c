@@ -63,7 +63,7 @@ void apptask_5ms(void)
  *-----------------------------------*/
 void apptask_20ms()
 {
-	Disp_Init();
+	LCD1602A_Disp_Cfg_Refres();
 
 }
 
@@ -104,9 +104,9 @@ void apptask_500ms(void)
 
 
 	/*Send the RTC over UAT*/
-//	RTC_SendClock();
+	RTC_SendClock();
 
-	Disp_Main();
+	LCD1602A_Disp_Main();
 }
 
 /*-------------------------------------

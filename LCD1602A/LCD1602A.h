@@ -8,7 +8,10 @@
 #ifndef LCD1602A_H_
 #define LCD1602A_H_
 
-//#define LCD_8_DATA_LINES
+
+/*LCD Configuation*/
+#define LCD_8_DATA_LINES	0
+#define LCD_4_DATA_LINES	1
 
 #include <stdint.h>
 
@@ -21,19 +24,19 @@
 #define DISP_N	0x08u /* 1: 2 Lines			0: 1 Line LCD Lines*/
 #define DISP_F	0x04u /* 1: 5x10 LCD font	0: 5x8 LCD Font*/
 
-/*
 
-S = 1: Accompanies display shift
-S/C = 1: Display shift
-S/C = 0: Cursor move
-R/L = 1: Shift to the right
-R/L = 0: Shift to the left
-DL = 1: 8 bits, DL = 0: 4 bits
-N = 1: 2 lines, N = 0: 1 line
-F = 1: 5 ´ 10 dots, F = 0: 5 ´ 8 dots
-BF = 1: Internally operating
-BF = 0: Instructions acceptable
-*/
+/********************************************
+S = 1: Accompanies display shift			*
+S/C = 1: Display shift						*
+S/C = 0: Cursor move						*
+R/L = 1: Shift to the right					*
+R/L = 0: Shift to the left					*
+DL = 1: 8 bits, DL = 0: 4 bits				*
+N = 1: 2 lines, N = 0: 1 line				*
+F = 1: 5 ´ 10 dots, F = 0: 5 ´ 8 dots		*
+BF = 1: Internally operating				*
+BF = 0: Instructions acceptable				*
+*********************************************/
 
 #define DISP_ON_D	0x04u /*1: Disp On 		0: Disp Off*/
 #define DISP_ON_C	0x02u /*1: Cursor ON  	0: Cursor OFF*/
@@ -180,24 +183,15 @@ typedef enum
 
 }ASCII_Char;
 
+/*Exported Variables and Functions*/
 
 extern menu_index_type SetMenu;
 extern uint8_t Disp_Init_Complete;
 
-void Disp_ON(void);
-void Disp_send_enable(void);
-void Disp_Clear(void);
-void Disp_Main(void);
-void Disp_FunctionSet(void);
-void Disp_SendCmd(uint8_t disp_command);
-void Disp_wait_us(uint64_t usec_time);
-void Disp_Init(void);
-void Disp_write_ASCII(ASCII_Char character);
-void Disp_RefreshCfg(void);
-void Disp_Menues(void);
-void Disp_CfgBlink(uint8_t State);
 
 extern void LCD1602A_Init(void);
+extern void LCD1602A_Disp_Main(void);
+extern void LCD1602A_Disp_Cfg_Refres(void);
 
 
 extern ASCII_Char SetTime_Menu[5];
