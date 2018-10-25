@@ -45,18 +45,20 @@ void io_init(void)
     io_Pin_Cfg(PORT_D, 1, kGPIO_DigitalOutput, kPORT_PullUp);
 
     /*Pin Cfg for LCD 1602*/
-#ifdef LCD_8_DATA_LINES
+#if LCD_8_DATA_LINES
     io_Pin_Cfg(PORT_B, 0u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D0*/
 	io_Pin_Cfg(PORT_B, 1u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D1*/
 	io_Pin_Cfg(PORT_B, 2u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D2*/
 	io_Pin_Cfg(PORT_B, 3u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D3*/
-#else
+#elif LCD_4_DATA_LINES
 	io_Pin_Cfg(PORT_B, 0u, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN1*/
 	io_Pin_Cfg(PORT_B, 1u, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN2*/
 
 	io_Pin_Cfg(PORT_B, 2u, kGPIO_DigitalInput, kPORT_PullDown);/*Set Time*/
 	io_Pin_Cfg(PORT_B, 3u, kGPIO_DigitalInput, kPORT_PullDown);/*Time +*/
 	io_Pin_Cfg(PORT_E, 20u, kGPIO_DigitalInput, kPORT_PullDown);/*Time -*/
+#else
+	#error "LCD  CONFIG IS NOT CORRECT"
 #endif
 
 	//io_Pin_Cfg(PORT_E,0u,kGPIO_DigitalOutput,kPORT_PullUp); //UART1 TX
