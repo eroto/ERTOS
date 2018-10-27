@@ -122,6 +122,7 @@ void apptask_1s(void)
 	//GPIO_WritePinOutput(GPIOA, 1, 0); /*Enable RS*/
 	GPIO_TogglePinsOutput(GPIOB,1);
 
+
 	relayctrl_main();
 
 	LowPowerMode_Ctr++;

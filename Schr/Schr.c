@@ -20,7 +20,7 @@
 *   Global Variable Definitions
 ******************************************************************************/
 T_TaskPowerModeType  re_curOpMode;
-volatile SCHM_BOOLEAN re_mngExecflag;
+volatile SCHM_BOOLEAN re_mngExecflag;/* Scheduler execution flag is set in timer interrupt handler */
 
 /* Manager/Application main function list */
 const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
@@ -58,9 +58,14 @@ void Schr_Init( void )
 
     re_curOpMode = HIGH_POWER;
 
-    Sys_tick = MSEC_TO_COUNT(5, BOARD_BOOTCLOCKRUN_CORE_CLOCK);
 
+#if SCHR_PIT
+    EnableIRQ(PIT_IRQn);
+#elif SCHR_SYSTICK
+    Sys_tick = MSEC_TO_COUNT(5, BOARD_BOOTCLOCKRUN_CORE_CLOCK);
     SysTick_Config(Sys_tick);
+    EnableIRQ(SysTick_IRQn);
+#endif
 
 }
 
@@ -149,7 +154,6 @@ void PIT_IRQHandler(void)
 
 }
 #elif SCHR_SYSTICK
-
 /*-------------------------------------
  * Function: SysTick_Handler
  * Desc: Exeption Handler Called in interrupt context
@@ -163,10 +167,11 @@ void PIT_IRQHandler(void)
  * 		generated when the SysTick timer reaches zero.
  * SRS:
  *-----------------------------------*/
-SysTick_Handler(void)
+void SysTick_Handler(void)
 {
 	re_mngExecflag = SCHM_TRUE;
 }
+
 #else
 #error "Scheduler Tick configuration is not valid"
 #endif
