@@ -25,15 +25,20 @@ typedef uint16_t T_DelayMainType;
 
 typedef enum
 {
+	SCHM_FALSE = 0,
+	SCHM_TRUE
+}
+SCHM_BOOLEAN;
+
+typedef enum
+{
 	HIGH_POWER = 0,
 	LOW_POWER,
 	NUM_OF_POWER_MODES
 }T_TaskPowerModeType;
 
-
-
-
 extern T_TaskPowerModeType  re_curOpMode;
+
 
 /******************************************************************************
 *   Macro Definitions

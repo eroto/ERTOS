@@ -7,6 +7,7 @@
 
 
 #include <stdint.h>
+#include "board.h"
 #include "mytypedef.h"
 #include "Schr_cfg.h"
 #include "Schr.h"
@@ -19,7 +20,7 @@
 *   Global Variable Definitions
 ******************************************************************************/
 T_TaskPowerModeType  re_curOpMode;
-volatile SCHM_BOOLEAN re_mngExecflag;
+volatile SCHM_BOOLEAN re_mngExecflag;/* Scheduler execution flag is set in timer interrupt handler */
 
 /* Manager/Application main function list */
 const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
@@ -49,13 +50,22 @@ const S_SCHM_MANAGER_EXEC_TYPE cps_mngTaskList[SCHD_MANAGERS_NUMBER] =
  *-----------------------------------*/
 void Schr_Init( void )
 {
-
+	uint32_t Sys_tick = 0;
     /* clear timer interrupt flag */
     re_mngExecflag = SCHM_FALSE;
 
     PIT_StartTimer(PIT, kPIT_Chnl_0);
 
     re_curOpMode = HIGH_POWER;
+
+
+#if SCHR_PIT
+    EnableIRQ(PIT_IRQn);
+#elif SCHR_SYSTICK
+    Sys_tick = MSEC_TO_COUNT(5, BOARD_BOOTCLOCKRUN_CORE_CLOCK);
+    SysTick_Config(Sys_tick);
+    EnableIRQ(SysTick_IRQn);
+#endif
 
 }
 
@@ -121,10 +131,13 @@ void Schr_Exec( void )
     return;
 }
 
-
+#if (SCHR_PIT && SCHR_SYSTICK)
+#error "Only one Scheduler Tick configuration can be active at a time"
+#elif SCHR_PIT
 /*-------------------------------------
  * Function: PIT_IRQHandler
- * Desc: Called in interrupt context
+ * Desc: Programable Interrup Timer
+ * 		Called in interrupt context
  * 		to call the increment in
  * 		the Scheduler, Sys Tick.
  * input: void
@@ -140,4 +153,26 @@ void PIT_IRQHandler(void)
     PIT_ClearStatusFlags(PIT, 0, kPIT_TimerFlag);
 
 }
+#elif SCHR_SYSTICK
+/*-------------------------------------
+ * Function: SysTick_Handler
+ * Desc: Exeption Handler Called in interrupt context
+ *		Optional system timer, SysTick, is a 24-bit
+ *		count-down timer. If supported by the ARM core,
+ *		use this as a Real Time Operating System (RTOS)
+ *		tick timer or as a simple counter.
+ * input: void
+ * return: void
+ * Note: ARM Exeption Handler, a SysTick exception is
+ * 		generated when the SysTick timer reaches zero.
+ * SRS:
+ *-----------------------------------*/
+void SysTick_Handler(void)
+{
+	re_mngExecflag = SCHM_TRUE;
+}
+
+#else
+#error "Scheduler Tick configuration is not valid"
+#endif
 

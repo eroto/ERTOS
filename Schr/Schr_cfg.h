@@ -15,6 +15,10 @@
 /* -------- */
 #include <stdint.h>
 
+
+#define SCHR_SYSTICK 1
+#define SCHR_PIT 0
+
 /* Enable frozeen of scheduler tick in debug mode*/
 /*  1: enable tick frozzen, 
     0: disable tick frozzen */

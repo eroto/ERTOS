@@ -44,8 +44,6 @@ void timers_init(void)
 
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
 
-	EnableIRQ(PIT_IRQn);
-
 	PIT_StopTimer(PIT, kPIT_Chnl_0);
 
 }

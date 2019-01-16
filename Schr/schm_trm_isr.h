@@ -36,17 +36,13 @@
 *   Type Definitions
 ******************************************************************************/
 
-typedef enum
-{
-    SCHM_FALSE = 0,
-    SCHM_TRUE  = 1
-}SCHM_BOOLEAN;
+
 
 /******************************************************************************
 *   External Variables
 ******************************************************************************/
-/* Module execution flag is set in timer interrupt handler */
-extern volatile SCHM_BOOLEAN re_mngExecflag;
+
+
 
 /******************************************************************************
 *   Global Function Prototypes  
