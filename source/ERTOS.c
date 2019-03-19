@@ -764,7 +764,7 @@ void APP_task(void)
             	s_currSendBuf[1] = 'O';
             	s_currSendBuf[2] = 'L';
             	s_currSendBuf[3] = 'A';
-            	s_currSendBuf[4] = '\n';
+            	s_currSendBuf[4] = '\r';
             	s_sendSize = 5;
             }
             else
