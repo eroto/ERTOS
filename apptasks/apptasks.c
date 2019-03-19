@@ -18,6 +18,7 @@
 #include "pm.h"
 #include "timers.h"
 #include "board.h"
+#include "virtual_com.h"
 #include "apptasks.h"
 
 uint8_t value = 1;
@@ -42,6 +43,9 @@ uint8_t LowPowerMode_Ctr = 0;
 void apptask_5ms(void)
 {
     //GPIO_TogglePinsOutput(GPIOC, 1<<7);
+
+	APP_task();
+
 	uart_main();
 
 	//io_Debounce_Pin_DI(PORT_B, 2);

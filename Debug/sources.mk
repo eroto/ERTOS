@@ -26,8 +26,12 @@ Timers \
 apptasks \
 drivers \
 frdmkl25z \
+osa \
 pm \
 source \
 startup \
+usb/device/source/khci \
+usb/device/source \
+usb_sources \
 utilities \
 
