@@ -9,9 +9,13 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include utilities/subdir.mk
+-include usb_sources/subdir.mk
+-include usb/device/source/khci/subdir.mk
+-include usb/device/source/subdir.mk
 -include startup/subdir.mk
 -include source/subdir.mk
 -include pm/subdir.mk
+-include osa/subdir.mk
 -include frdmkl25z/subdir.mk
 -include drivers/subdir.mk
 -include apptasks/subdir.mk

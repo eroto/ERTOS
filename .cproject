@@ -97,6 +97,12 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/startup}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/frdmkl25z}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/utilities}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/osa}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/usb/device/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/usb/device/source/khci}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/usb/device/source}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/usb/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ERTOS/usb_sources}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.files.1973152056" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files" useByScannerDiscovery="false"/>
 								<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.322498716" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false"/>
@@ -245,9 +251,9 @@
 								<option id="com.crt.advproject.link.gcc.multicore.empty.974229776" name="No Multicore options for this project" superClass="com.crt.advproject.link.gcc.multicore.empty" useByScannerDiscovery="false"/>
 								<option id="com.crt.advproject.link.config.2041701281" name="Obsolete (Config)" superClass="com.crt.advproject.link.config" useByScannerDiscovery="false"/>
 								<option id="com.crt.advproject.link.store.1130586508" name="Obsolete (Store)" superClass="com.crt.advproject.link.store" useByScannerDiscovery="false"/>
-								<option id="com.crt.advproject.link.memory.load.image.1473947894" superClass="com.crt.advproject.link.memory.load.image" value="" valueType="string"/>
-								<option id="com.crt.advproject.link.memory.data.33810520" superClass="com.crt.advproject.link.memory.data" value="" valueType="string"/>
-								<option id="com.crt.advproject.link.memory.sections.1027838341" superClass="com.crt.advproject.link.memory.sections" valueType="stringList"/>
+								<option id="com.crt.advproject.link.memory.load.image.1473947894" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image" value="" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.data.33810520" name="Global data placement" superClass="com.crt.advproject.link.memory.data" value="" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.sections.1027838341" name="Extra linker script input sections" superClass="com.crt.advproject.link.memory.sections" valueType="stringList"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.628471392" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -269,9 +275,12 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="apptasks"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="frdmkl25z"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="osa"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="pm"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="source"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="startup"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="usb"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="usb_sources"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="utilities"/>
 					</sourceEntries>
 				</configuration>
@@ -506,9 +515,9 @@
 								<option id="com.crt.advproject.link.gcc.multicore.empty.1421995523" name="No Multicore options for this project" superClass="com.crt.advproject.link.gcc.multicore.empty"/>
 								<option id="com.crt.advproject.link.config.689746709" name="Obsolete (Config)" superClass="com.crt.advproject.link.config"/>
 								<option id="com.crt.advproject.link.store.1103398545" name="Obsolete (Store)" superClass="com.crt.advproject.link.store"/>
-								<option id="com.crt.advproject.link.memory.load.image.344360646" superClass="com.crt.advproject.link.memory.load.image" value="" valueType="string"/>
-								<option id="com.crt.advproject.link.memory.data.2095480392" superClass="com.crt.advproject.link.memory.data" value="" valueType="string"/>
-								<option id="com.crt.advproject.link.memory.sections.2076842698" superClass="com.crt.advproject.link.memory.sections" valueType="stringList"/>
+								<option id="com.crt.advproject.link.memory.load.image.344360646" name="Plain load image" superClass="com.crt.advproject.link.memory.load.image" value="" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.data.2095480392" name="Global data placement" superClass="com.crt.advproject.link.memory.data" value="" valueType="string"/>
+								<option id="com.crt.advproject.link.memory.sections.2076842698" name="Extra linker script input sections" superClass="com.crt.advproject.link.memory.sections" valueType="stringList"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.142170168" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -530,9 +539,12 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="apptasks"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="frdmkl25z"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="osa"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="pm"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="source"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="startup"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="usb"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="usb_sources"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="utilities"/>
 					</sourceEntries>
 				</configuration>

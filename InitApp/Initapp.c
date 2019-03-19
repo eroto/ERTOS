@@ -19,6 +19,7 @@
 #include "rtc.h"
 #include "LCD1602A.h"
 #include "relayctrl.h"
+#include "virtual_com.h"
 
 
 
