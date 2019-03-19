@@ -13,8 +13,9 @@
 #define RELAYCTRL_H_
 
 
-extern void relayctrl_init(void);
-extern void relayctrl_main(void);
+
+void relayctrl_init(void);
+void relayctrl_main(void);
 
 
 
