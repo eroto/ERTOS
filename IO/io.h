@@ -13,6 +13,7 @@
 #include "fsl_clock.h"
 #include "fsl_gpio.h"
 #include "fsl_port.h"
+#include "board.h"
 
 #define io_Read_Pin(a_PORT, a_PIN)	GPIO_ReadPinInput(a_PORT, a_PIN)
 

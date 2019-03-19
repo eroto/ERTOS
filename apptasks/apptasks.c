@@ -17,6 +17,7 @@
 #include "Schr.h"
 #include "pm.h"
 #include "timers.h"
+#include "board.h"
 #include "apptasks.h"
 
 uint8_t value = 1;
@@ -120,7 +121,9 @@ void apptask_500ms(void)
 void apptask_1s(void)
 {
 	//GPIO_WritePinOutput(GPIOA, 1, 0); /*Enable RS*/
-	GPIO_TogglePinsOutput(GPIOB,1);
+	//GPIO_TogglePinsOutput(GPIOB,1);
+
+	LED_GREEN_TOGGLE();
 
 
 	relayctrl_main();

@@ -44,6 +44,9 @@ void io_init(void)
     /*Pin Cfg Blue LED*/
     io_Pin_Cfg(PORT_D, 1, kGPIO_DigitalOutput, kPORT_PullUp);
 
+    /*Pin Cfg Blue GREEN*/
+    io_Pin_Cfg(PORT_B, BOARD_LED_GREEN_GPIO_PIN, kGPIO_DigitalOutput, kPORT_PullUp);
+
     /*Pin Cfg for LCD 1602*/
 #if LCD_8_DATA_LINES
     io_Pin_Cfg(PORT_B, 0u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D0*/
