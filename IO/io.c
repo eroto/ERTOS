@@ -36,52 +36,64 @@ void io_Debounce_Pin_DI_Low(DebStruct_t *Deb_Struct);
  *-----------------------------------*/
 void io_init(void)
 {
-
-
     /*Reset*/
     io_Pin_Cfg(PORT_B, 8, kGPIO_DigitalInput, kPORT_PullDown);
 
     /*Pin Cfg Blue LED*/
     io_Pin_Cfg(PORT_D, 1, kGPIO_DigitalOutput, kPORT_PullUp);
 
-    /*Pin Cfg Blue GREEN*/
+    /*Pin Cfg RED LED*/
+    io_Pin_Cfg(PORT_B, BOARD_LED_RED_GPIO_PIN, kGPIO_DigitalOutput, kPORT_PullUp);
+
+    /*Pin Cfg GREEN LED*/
     io_Pin_Cfg(PORT_B, BOARD_LED_GREEN_GPIO_PIN, kGPIO_DigitalOutput, kPORT_PullUp);
 
-    /*Pin Cfg for LCD 1602*/
-#if LCD_8_DATA_LINES
-    io_Pin_Cfg(PORT_B, 0u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D0*/
-	io_Pin_Cfg(PORT_B, 1u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D1*/
-	io_Pin_Cfg(PORT_B, 2u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D2*/
-	io_Pin_Cfg(PORT_B, 3u, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD 1602 D3*/
+    /*
+     *LCD 1602 Configuration
+     */
+	io_Pin_Cfg(PORT_C, LCD_E, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_A, LCD_RS, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_A, LCD_RW, kGPIO_DigitalOutput, kPORT_PullDown);
+#if LCD_8_DATA_LINES & LCD_4_DATA_LINES
+	#error "INCORRECT LCD CONFIG, only one option is possible LCD_4_DATA_LINES 1 or LCD_8_DATA_LINES 1"
+#elif  LCD_8_DATA_LINES
+    io_Pin_Cfg(PORT_B, LCD_D0, kGPIO_DigitalOutput, kPORT_PullDown);
+	io_Pin_Cfg(PORT_B, LCD_D1, kGPIO_DigitalOutput, kPORT_PullDown);
+	io_Pin_Cfg(PORT_B, LCD_D2, kGPIO_DigitalOutput, kPORT_PullDown);
+	io_Pin_Cfg(PORT_B, LCD_D3, kGPIO_DigitalOutput, kPORT_PullDown);
+	io_Pin_Cfg(PORT_C, LCD_D4, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_C, LCD_D5, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_C, LCD_D6, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_C, LCD_D7, kGPIO_DigitalOutput, kPORT_PullDown);
 #elif LCD_4_DATA_LINES
-	io_Pin_Cfg(PORT_B, 0u, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN1*/
-	io_Pin_Cfg(PORT_B, 1u, kGPIO_DigitalOutput, kPORT_PullDown);/*Relay IN2*/
+
+	io_Pin_Cfg(PORT_C, LCD_D4, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_C, LCD_D5, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_C, LCD_D6, kGPIO_DigitalOutput, kPORT_PullDown);
+    io_Pin_Cfg(PORT_C, LCD_D7, kGPIO_DigitalOutput, kPORT_PullDown);
+#else
+	#error "INCORRECT LCD CONFIG, LCD_4_DATA_LINES shall be 1 or LCD_8_DATA_LINES shall be 1"
+#endif
+
+#if (RELAY_ENABLE & LCD_4_DATA_LINES)
+	io_Pin_Cfg(PORT_B, RELAY_IN1, kGPIO_DigitalOutput, kPORT_PullDown);
+	io_Pin_Cfg(PORT_B, RELAY_IN2, kGPIO_DigitalOutput, kPORT_PullDown);
 
 	io_Pin_Cfg(PORT_B, 2u, kGPIO_DigitalInput, kPORT_PullDown);/*Set Time*/
 	io_Pin_Cfg(PORT_B, 3u, kGPIO_DigitalInput, kPORT_PullDown);/*Time +*/
 	io_Pin_Cfg(PORT_E, 20u, kGPIO_DigitalInput, kPORT_PullDown);/*Time -*/
-#else
-	#error "LCD  CONFIG IS NOT CORRECT"
+#elif (RELAY_ENABLE & LCD_8_DATA_LINES)
 #endif
 
-	//io_Pin_Cfg(PORT_E,0u,kGPIO_DigitalOutput,kPORT_PullUp); //UART1 TX
-	//io_Pin_Cfg(PORT_E,1u,kGPIO_DigitalInput,kPORT_PullUp); //UART1 RX
-
-	io_Pin_Cfg(PORT_C, 0u, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 E*/
-
-	io_Pin_Cfg(PORT_C, 4u, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D4*/
-    io_Pin_Cfg(PORT_C, 5, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D5*/
-    io_Pin_Cfg(PORT_C, 6, kGPIO_DigitalOutput, kPORT_PullDown); /*LCD 1602 D6*/
-    io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput, kPORT_PullDisable); /*LCD 1602 D7*/
-
-    io_Pin_Cfg(PORT_A, 1, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD RS*/
-    io_Pin_Cfg(PORT_A, 2, kGPIO_DigitalOutput, kPORT_PullDown);/*LCD R/W*/
+	io_Pin_Cfg(PORT_E,UART1_TX,kGPIO_DigitalOutput,kPORT_PullUp);
+	io_Pin_Cfg(PORT_E,UART1_RX,kGPIO_DigitalInput,kPORT_PullUp);
 
     GPIO_ClearPinsOutput(GPIOB, 0x0Fu);
     GPIO_ClearPinsOutput(GPIOC, 0xF1u);
-    GPIO_WritePinOutput(GPIOA, 1, 0); /*LCD RS to 0*/
-    GPIO_WritePinOutput(GPIOA, 2, 0); /*LCD RW to 0*/
-    //GPIO_WritePinOutput(GPIOC, 0, 0);
+    GPIO_WritePinOutput(GPIOA, LCD_RS, 0); /*LCD_RS to 0*/
+    GPIO_WritePinOutput(GPIOA, LCD_RW, 0); /*LCD_RW to 0*/
+    GPIO_WritePinOutput(GPIOC, LCD_E, 0);  /*LCD_E to 0*/
+
 }
 
 

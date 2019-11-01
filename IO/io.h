@@ -20,6 +20,24 @@
 #define DEB_CFG 40
 
 
+#define LCD_E		0u	/*LCD_E Pin0*/
+#define LCD_RS		1u	/*LCD_RS Pin1*/
+#define LCD_RW		2u	/*LCD_RW Pin2*/
+#define LCD_D0		0u	/*LCD_D0 Pin 0u*/
+#define LCD_D1		1u	/*LCD_D1 Pin 1u*/
+#define LCD_D2		2u  /*LCD_D2 Pin 2u*/
+#define LCD_D3		3u  /*LCD_D3 Pin 3u*/
+#define LCD_D4		4u  /*LCD_D4 Pin 4u*/
+#define LCD_D5		5u  /*LCD_D5 Pin 5u*/
+#define LCD_D6		6u  /*LCD_D6 Pin 6u*/
+#define LCD_D7		7u  /*LCD_D7 Pin 7u*/
+
+#define RELAY_IN1	0u  /*RELAY_IN1 Pin 0*/
+#define RELAY_IN2	1u  /*RELAY_IN2 Pin 1*/
+
+#define UART1_TX	0u	/*UART1_TX*/
+#define UART1_RX	1u	/*UART1_RX*/
+
 /* enums and typedef*/
 /*----------------------------------------------------------------------------------------------*/
 typedef enum
