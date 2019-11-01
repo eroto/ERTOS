@@ -57,7 +57,7 @@
  */
 
 /* TEXT BELOW IS USED AS SETTING FOR THE CLOCKS TOOL *****************************
-!!ClocksProfile
+!ClocksProfile
 product: Clocks v1.0
 processor: MKL25Z128xxx4
 package_id: MKL25Z128VLK4

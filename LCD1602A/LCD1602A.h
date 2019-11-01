@@ -14,6 +14,7 @@
 #define LCD_4_DATA_LINES	1
 
 #include <stdint.h>
+#include <string.h>
 
 #define CLK_SRC_HZ	((uint64_t)24000000)
 
@@ -68,7 +69,6 @@ I/D = 0: Decrement
 #define DISP_DELAY					(uint8_t)100u
 #define ENABLE_WITH					(uint8_t)10u
 
-
 typedef enum
 {
 	SHOW_TIME,
@@ -82,10 +82,6 @@ typedef enum
 	SET_COMPLETE,
 	INVALID_MENU
 }menu_index_type;
-
-
-
-
 
 
 typedef enum
@@ -200,6 +196,7 @@ extern ASCII_Char SetDate_Menu[5];
 extern uint8_t Disp_On_Var;
 extern uint8_t Disp_FuncSet_Var;
 extern uint8_t Disp_EntryMode_Var;
+
 
 
 

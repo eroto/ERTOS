@@ -24,7 +24,9 @@ void LCD1602A_Disp_Read_BF(void);
 void LCD1602A_Disp_SendCmd(uint8_t disp_command);
 void LCD1602A_Disp_wait_us(uint64_t usec_time);
 void LCD1602A_Disp_Menues(void);
-void LCD1602A_ShowMenue(uint8_t const *buffer);
+void LCD1602A_Disp_write_ASCII(uint8_t ASCII_character);
+void LCD1602A_Print(uint8_t const *buffer);
+uint8_t LCD1602A_dig2ascii(uint8_t digit,uint8_t *dest);
 uint16_t Button_IncDec_Mgr(uint16_t value);
 
 
@@ -150,33 +152,27 @@ void LCD1602A_Disp_Read_BF(void)
 	/*Change D7 to Input*/
 	io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalInput, kPORT_PullDisable); /*LCD 1602 D7*/
 
-	/*Debug PIN*/
-	io_Pin_Cfg(PORT_B, 3, kGPIO_DigitalOutput, kPORT_PullDisable);/*Time +*/
-	//GPIO_WritePinOutput(GPIOB, 3, FALSE);
-
-
 	/*LCD RS to 0*/
 	GPIO_WritePinOutput(GPIOA, 1, 0);
-
-
 
 #if	LCD_8_DATA_LINES
 	/*Read BF while is 1*/
 	 do
 	 {
 		 /*Send Enable*/
-		 GPIO_WritePinOutput(GPIOC, 0, TRUE);
-		 __asm("nop");
-		 to = 1 + to;
-		 BF =  GPIO_ReadPinInput(GPIOC, 7); /*Read Busy Flag D7*/
-		 __asm("nop");
-		 GPIO_WritePinOutput(GPIOC, 0, FALSE);
+		GPIO_WritePinOutput(GPIOC, LCD_E, TRUE);/*Send Enable HIGH*/
+		LCD1602A_Disp_wait_us(10);
+		GPIO_WritePinOutput(GPIOC, LCD_E, FALSE);/*Send Enable LOW*/
 
-		 if(to > 900u)
+		 BF =  GPIO_ReadPinInput(GPIOC, 7); /*Read Busy Flag D7*/
+		 LCDBusy = BF;
+
+		 to = 1 + to;
+		 if(to > 10u)
 		 {
-			BF = 0u;
+			 LCDBusy = 0u;
 		 }
-	 }while(BF);
+	 }while(LCDBusy);
 #endif
 
 #if	LCD_4_DATA_LINES
@@ -186,54 +182,46 @@ void LCD1602A_Disp_Read_BF(void)
 		 /*Check BF*/
 		for(i = 0; i < 2; i++)
 		{
-			/*LCD RW to 1*/
-			GPIO_WritePinOutput(GPIOA, 2, 1);
-			BF = 1;
-			/*Send Enable*/
-			GPIO_WritePinOutput(GPIOC, 0, TRUE);
+			/*set LCD RW to 1*/
+			GPIO_WritePinOutput(GPIOA, LCD_RW, 1);
+			LCD1602A_Disp_wait_us(10);
+
 			 if(i == 0)
 			 {
+				GPIO_WritePinOutput(GPIOC, LCD_E, TRUE);/*Send Enable HIGH*/
+				LCD1602A_Disp_wait_us(10);
+				GPIO_WritePinOutput(GPIOC, LCD_E, FALSE);/*Send Enable LOW*/
 				 /*Read BusyFlag BF*/
 				 BF = GPIO_ReadPinInput(GPIOC, 7); /*Read Busy Flag D7*/
 				 if (BF == 0)
 				 {
-					 GPIO_WritePinOutput(GPIOB, 3, FALSE);
 					 LCDBusy = FALSE;
-					 GPIO_WritePinOutput(GPIOB, 3, TRUE);
 				 }
-				 //Disp_wait_us(2);
+				 else{BF == 1;}
 			 }
 			 else
 			 {
-				 //LCDBusy = TRUE;
-				 LCD1602A_Disp_wait_us(3);
+				GPIO_WritePinOutput(GPIOC, LCD_E, TRUE);/*Send Enable HIGH*/
+				LCD1602A_Disp_wait_us(20);
+				GPIO_WritePinOutput(GPIOC, LCD_E, FALSE);/*Send Enable LOW*/
 			 }
-
-			 /*Clear Enable*/
-			 GPIO_WritePinOutput(GPIOC, 0, FALSE);
 			 to = 1 + to;
-			 /*LCD RW to 0*/
-			 GPIO_WritePinOutput(GPIOA, 2, 0);
 		}
 
-		if(to >= 2000u)
+		if(to >= 10u)
 		 {
-			 __asm("nop");
 			 BF = 0u;
 			 LCDBusy = FALSE;
-			 __asm("nop");
 		 }
-		//Disp_wait_us(3);
 
 	 }while(LCDBusy);
+
+	 /*LCD RW to 0*/
+	GPIO_WritePinOutput(GPIOA, LCD_RW, 0);
 
 #endif
 	/*Change D7 to Output*/
 	io_Pin_Cfg(PORT_C, 7, kGPIO_DigitalOutput, kPORT_PullDisable); /*LCD 1602 D7*/
-
-	 //GPIO_WritePinOutput(GPIOA, 1, 0); /*LCD RS to 0*/
-
-	 io_Pin_Cfg(PORT_B, 3, kGPIO_DigitalInput, kPORT_PullDisable);/*Time +*/
 }
 
 
@@ -251,10 +239,10 @@ void LCD1602A_Disp_SendCmd(uint8_t disp_command)
 #if LCD_4_DATA_LINES
 	uint8_t i = 0;
 #endif
-	uint8_t cmd_LH[2];
+	uint8_t cmd_LH[2] = {0,0}; /*Command in 4-bit  Low and High init*/
 
-	GPIO_WritePinOutput(GPIOA, 1, 0); /*Enable RS*/
-	GPIO_WritePinOutput(GPIOA, 2, 0); /*LCD RW to 0*/
+	GPIO_WritePinOutput(GPIOA, LCD_RS, 0); /*Enable RS*/
+	GPIO_WritePinOutput(GPIOA, LCD_RW, 0); /*LCD RW to 0*/
 
 #if LCD_8_DATA_LINES
 	cmd_LH[LOW_NIBBLE] = (uint8_t) (0x0F & disp_command); //Low
@@ -272,10 +260,13 @@ void LCD1602A_Disp_SendCmd(uint8_t disp_command)
 
 #if LCD_4_DATA_LINES
 
-	cmd_LH[0] = (uint8_t) ((uint8_t)(0x0F & disp_command) << 4); //Low
-	cmd_LH[1] = (uint8_t) (0xF0 & disp_command); //High
+	/*Instruction Register (IR) process*/
+	/*High nibble of PORTC is used bits 4-7*/
+	/*In 4 bits mode the high nibble is sent first IR7-IR4 then low nibble IR3-IR0*/
+	cmd_LH[0] = (uint8_t) ((uint8_t)(0xF0u & disp_command)); //High
+	cmd_LH[1] = (uint8_t) ((uint8_t)(0x0Fu & disp_command) << 4); //Low
 
-	for(i = 1; (i >= LOW_NIBBLE) && (i<= HIGH_NIBBLE); i--)
+	for(i = 0; i < 2u; i++)
 	{
 		GPIO_SetPinsOutput(GPIOC, cmd_LH[i]);
 		GPIO_ClearPinsOutput(GPIOC, ~cmd_LH[i]);
@@ -346,7 +337,7 @@ void LCD1602A_Disp_ON(void)
  * Note:
  * SRS:
  *-----------------------------------*/
-void LCD1602A_Disp_write_ASCII(ASCII_Char ASCII_character)
+void LCD1602A_Disp_write_ASCII(uint8_t ASCII_character)
 {
 
 #if LCD_4_DATA_LINES
@@ -355,7 +346,7 @@ void LCD1602A_Disp_write_ASCII(ASCII_Char ASCII_character)
 
 	ASCII_Char ASCII_LH[2];
 
-	GPIO_WritePinOutput(GPIOA, 1, 1); /*Enable RS*/
+	GPIO_WritePinOutput(GPIOA, LCD_RS, 1); /*Enable RS*/
 
 /*8 Data lines code*/
 #if LCD_8_DATA_LINES
@@ -382,11 +373,10 @@ void LCD1602A_Disp_write_ASCII(ASCII_Char ASCII_character)
 		GPIO_SetPinsOutput(GPIOC, ASCII_LH[i]);
 		GPIO_ClearPinsOutput(GPIOC, ~ASCII_LH[i]);
 		LCD1602A_Disp_send_enable();
-		//Disp_wait_us(5);
 	}
 #endif
 
-	GPIO_WritePinOutput(GPIOA, 1, 0); /*Disable RS*/
+	GPIO_WritePinOutput(GPIOA, LCD_RS, 0); /*Disable RS*/
 
 	LCD1602A_Disp_Read_BF();
 }
@@ -462,7 +452,7 @@ void LCD1602A_Disp_Main(void)
 
 	LCD1602A_Disp_Menues();
 
-	//LCD1602A_ShowMenue(LCD1602_buffer);
+	//LCD1602A_Print(LCD1602_buffer);
 
 
 /*	if(i>8)
@@ -499,14 +489,14 @@ void LCD1602A_Disp_CfgBlink(uint8_t State)
 }
 
 /*-------------------------------------
- * Function: LCD1602A_ShowMenue
+ * Function: LCD1602A_Print
  * Desc:
  * input:
  * return:
  * Note:
  * SRS:
  *-----------------------------------*/
-void LCD1602A_ShowMenue(uint8_t const *buffer)
+void LCD1602A_Print(uint8_t const *buffer)
 {
 	uint8_t i = 0;
 	while(buffer[i] != 0xFF)
@@ -520,6 +510,8 @@ void LCD1602A_ShowMenue(uint8_t const *buffer)
 			i++;
 		}
 }
+
+
 
 /*-------------------------------------
  * Function: Disp_Menues
@@ -542,30 +534,22 @@ void LCD1602A_Disp_Menues(void)
 	static uint8_t MenuShow = 0;
 	static uint16_t value;
 
+	char TimeMsg[5]={"Time:"};
+
 
 	switch (MenuName)
 	{
 	case SHOW_TIME:
-		hrd1 = (PublicSendData[0] / 10) + 0x30;
-		hrd2 = (PublicSendData[0] % 10) + 0x30;
 
-		mind1 = (PublicSendData[1] /10) + 0x30;
-		mind2 = (PublicSendData[1] % 10)  + 0x30;
+		memcpy(LCD1602_buffer, TimeMsg, strlen(TimeMsg)+1);
+		LCD1602A_dig2ascii(PublicSendData[0],&LCD1602_buffer[5]); /*hr*/
+		LCD1602_buffer[7] = ':';
+		LCD1602A_dig2ascii(PublicSendData[1],&LCD1602_buffer[8]); /*min*/
+		LCD1602_buffer[10] = ':';
+		LCD1602A_dig2ascii(PublicSendData[2],&LCD1602_buffer[11]); /*sec*/
+		LCD1602_buffer[13] = ASCII_space;
 
-		secd1 = (PublicSendData[2] /10) + 0x30;
-		secd2 = (PublicSendData[2] % 10)  + 0x30;
-
-		LCD1602_buffer[0] = hrd1;
-		LCD1602_buffer[1] = hrd2;
-		LCD1602_buffer[2] = ASCII_colom;
-		LCD1602_buffer[3] = mind1;
-		LCD1602_buffer[4] = mind2;
-		LCD1602_buffer[5] = ASCII_colom;
-		LCD1602_buffer[6] = secd1;
-		LCD1602_buffer[7] = secd2;
-		LCD1602_buffer[8] = ASCII_space;
-
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 		LCD1602A_Disp_SendCmd(DISP_RETURN_HOME);
 
 		break;
@@ -578,7 +562,7 @@ void LCD1602A_Disp_Menues(void)
 		LCD1602_buffer[7] = ASCII_colom;
 		LCD1602_buffer[8] = ASCII_0;
 		LCD1602_buffer[9] = ASCII_0;
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 
 		memcpy((void *) &value, (const void *) &date, sizeof(date));
 
@@ -614,7 +598,7 @@ void LCD1602A_Disp_Menues(void)
 			LCD1602_buffer[1] = ASCII_0+value;
 		}
 
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 
 		date.hour = (uint8_t)value;
 
@@ -651,7 +635,7 @@ void LCD1602A_Disp_Menues(void)
 			LCD1602_buffer[1] = ASCII_0+value;
 		}
 
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 
 		date.minute = (uint8_t)value;
 
@@ -677,7 +661,7 @@ void LCD1602A_Disp_Menues(void)
 		LCD1602_buffer[12] = ASCII_A;
 
 		value = 1;
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 		MenuName = SET_DATE_DAY;
 		break;
 
@@ -709,7 +693,7 @@ void LCD1602A_Disp_Menues(void)
 			LCD1602_buffer[1] = ASCII_0+value;
 		}
 
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 		date.day = (uint8_t)value;
 		rtc_SetDatetime(&date);
 		break;
@@ -742,7 +726,7 @@ void LCD1602A_Disp_Menues(void)
 			LCD1602_buffer[1] = ASCII_0+value;
 		}
 
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 		date.month = (uint8_t)value;
 		rtc_SetDatetime(&date);
 		break;
@@ -771,7 +755,7 @@ void LCD1602A_Disp_Menues(void)
 			LCD1602_buffer[3] = ASCII_0;
 		}
 
-		LCD1602A_ShowMenue(LCD1602_buffer);
+		LCD1602A_Print(LCD1602_buffer);
 
 		date.year = value;
 		rtc_SetDatetime(&date);
@@ -826,13 +810,50 @@ void LCD1602A_Disp_Menues(void)
 void LCD1602A_Disp_send_enable(void)
 {
 
-	GPIO_WritePinOutput(GPIOC, 0, TRUE);
+	GPIO_WritePinOutput(GPIOC, LCD_E, TRUE);
 
 	LCD1602A_Disp_wait_us(ENABLE_WITH);
 
-	GPIO_WritePinOutput(GPIOC, 0, FALSE);
+	GPIO_WritePinOutput(GPIOC,LCD_E, FALSE);
 }
 
+
+/*-------------------------------------
+ * Function: LCD1602A_dig2ascii
+ * Desc: function that receives a digit (0 to 99)
+ * 			and returns it ascci value in a arraay of 2
+ * 			e.g. 19 -> '1','9'
+ * 			e.g. 8 -> '0','8'
+ *
+ * input:
+ * return:
+ * Note:
+ * SRS:
+ *-----------------------------------*/
+uint8_t LCD1602A_dig2ascii(uint8_t digit,uint8_t *dest)
+{
+	uint8_t ret = 1; /*error*/
+
+	if((digit >= 10u) && (digit <= 99u))
+	{
+		dest[0] = (digit / 10u) + 0x30u;
+		dest[1] = (digit % 10u) + 0x30u;
+		ret = 0;
+	}
+	else if(digit <= 9u)
+	{
+		dest[0] = 0x30u;
+		dest[1] = digit + 0x30u;
+		ret = 0;
+	}
+	else
+	{
+		/*error the function converts only digits from 0 to 99*/
+		ret = 1;
+	}
+
+	return ret;
+}
 
 /*-------------------------------------
  * Function: Button_IncDec_Mgr

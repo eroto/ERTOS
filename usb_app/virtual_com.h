@@ -30,6 +30,7 @@
 #ifndef _USB_CDC_VCOM_H_
 #define _USB_CDC_VCOM_H_ 1
 
+#include "fsl_common.h"
 #include "usb.h"
 #include "usb_device_descriptor.h"
 

@@ -30,7 +30,13 @@ uint8_t LowPowerMode_Ctr = 0;
 #define PTB_Dx_clear	0x0Fu
 #define PTC_Dx_clear	0xF0u
 
-
+void HardFault_Handler(void)
+{
+	while(1)
+	{
+		LED_RED_ON();
+	}
+}
 
 /*-------------------------------------
  * Function: func_name

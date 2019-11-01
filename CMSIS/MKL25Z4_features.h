@@ -1955,7 +1955,7 @@
 /* @brief Size of the USB dedicated RAM */
 #define FSL_FEATURE_USB_KHCI_USB_RAM (0)
 /* @brief Has KEEP_ALIVE_CTRL register */
-#define FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED (0)
+#define FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED (1)
 /* @brief Has the Dynamic SOF threshold compare support */
 #define FSL_FEATURE_USB_KHCI_DYNAMIC_SOF_THRESHOLD_COMPARE_ENABLED (0)
 /* @brief Has the VBUS detect support */
