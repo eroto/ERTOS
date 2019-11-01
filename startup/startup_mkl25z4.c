@@ -382,9 +382,9 @@ WEAK_AV void NMI_Handler(void)
 { while(1) {}
 }
 
-WEAK_AV void HardFault_Handler(void)
+/*WEAK_AV void HardFault_Handler(void)
 { while(1) {}
-}
+}*/
 
 WEAK_AV void SVC_Handler(void)
 { while(1) {}
